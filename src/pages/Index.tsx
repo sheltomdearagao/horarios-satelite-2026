@@ -90,6 +90,7 @@ const Index = () => {
                 onLessonClick={handleTeacherLessonClick}
                 activeSubject={activeSubjectTeacher}
                 showTeacher={false}
+                highlightColor="#34d399"
               />
             )}
           </div>
@@ -122,6 +123,7 @@ const Index = () => {
                 onLessonClick={handleClassLessonClick}
                 activeSubject={activeSubjectGroup}
                 showTeacher={true}
+                highlightColor="#f97316"
               />
             )}
           </div>

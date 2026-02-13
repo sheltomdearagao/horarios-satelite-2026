@@ -9,11 +9,21 @@ interface ScheduleGridProps {
   onLessonClick: (lesson: Lesson) => void;
   classColorMap: Map<string, string>;
   showTeacher?: boolean;
+  highlightColor?: string;
 }
 
 const getSubjectCode = (lessonName: string) => {
   const segments = lessonName.split("-").map((segment) => segment.trim());
   return segments[segments.length - 1];
+};
+
+const hexToRgba = (hex: string, alpha: number) => {
+  const sanitized = hex.replace("#", "");
+  const bigint = parseInt(sanitized, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
 const LessonCard = ({
@@ -22,28 +32,29 @@ const LessonCard = ({
   isActive,
   onClick,
   showTeacher,
+  highlightColor = "#34d399",
 }: {
   lesson: Lesson;
   accent: string;
   isActive: boolean;
   onClick: () => void;
   showTeacher?: boolean;
+  highlightColor?: string;
 }) => (
   <button
     type="button"
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "relative flex w-full items-start gap-3 rounded-2xl border bg-white/95 transition-all duration-200",
-      "hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400",
-      "px-3 py-2 md:px-4 md:py-3 shadow-sm",
-      isActive
-        ? "ring-4 ring-emerald-400/30 bg-emerald-50 text-emerald-900 shadow-[0_25px_45px_rgba(16,185,129,0.2)]"
-        : "border-white/20"
+      "relative flex w-full items-start gap-3 rounded-2xl border bg-white/95 px-3 py-2 md:px-4 md:py-3 text-left shadow-sm transition-all duration-200",
+      "hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60",
+      isActive ? "shadow-[0_15px_40px_rgba(15,23,42,0.35)]" : "border-white/20"
     )}
     style={{
       borderLeftWidth: isActive ? undefined : 6,
-      borderLeftColor: isActive ? undefined : accent,
+      borderLeftColor: isActive ? highlightColor : accent,
+      boxShadow: isActive ? `0 18px 35px ${hexToRgba(highlightColor, 0.25)}` : undefined,
+      backgroundColor: isActive ? hexToRgba(highlightColor, 0.12) : undefined,
     }}
   >
     <span
@@ -52,14 +63,14 @@ const LessonCard = ({
         backgroundColor: accent,
       }}
     />
-    <div className="flex flex-1 flex-col gap-0.5">
+    <div className="flex flex-1 flex-col gap-1 overflow-hidden">
       <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
         <span className={cn(isActive && "text-emerald-600")}>{lesson.periodLabel}</span>
-        <span className="text-[0.55rem] text-slate-400">{lesson.shift === "morning" ? "MANHÃ" : "TARDE"}</span>
+        <span className="text-[0.55rem] text-slate-400">
+          {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
+        </span>
       </div>
-      <p className="text-sm md:text-base font-semibold leading-tight text-slate-900 truncate">
-        {lesson.className}
-      </p>
+      <p className="text-sm md:text-base font-semibold leading-tight text-slate-900 truncate">{lesson.className}</p>
       <div className="flex items-center justify-between text-[0.7rem] text-slate-500">
         <span className="font-medium uppercase tracking-[0.25em]">{lesson.time}</span>
         {isActive && (
@@ -69,7 +80,7 @@ const LessonCard = ({
         )}
       </div>
       {showTeacher && (
-        <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-600">
+        <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-600 truncate">
           Prof(a). {lesson.teacher}
         </p>
       )}
@@ -83,6 +94,7 @@ export const ScheduleGrid = ({
   onLessonClick,
   classColorMap,
   showTeacher = false,
+  highlightColor = "#34d399",
 }: ScheduleGridProps) => (
   <div className="-mx-4 overflow-x-auto pb-4 scrollbar-hide">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
@@ -133,6 +145,7 @@ export const ScheduleGrid = ({
                           lesson={lesson}
                           accent={accent}
                           showTeacher={showTeacher}
+                          highlightColor={highlightColor}
                           isActive={isActive}
                           onClick={() => onLessonClick(lesson)}
                         />
@@ -159,6 +172,7 @@ export const ScheduleGrid = ({
                           lesson={lesson}
                           accent={accent}
                           showTeacher={showTeacher}
+                          highlightColor={highlightColor}
                           isActive={isActive}
                           onClick={() => onLessonClick(lesson)}
                         />
