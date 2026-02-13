@@ -37,33 +37,39 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
-        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-8 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
-          <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-6">
-            <h1 className="text-4xl font-black text-white md:text-6xl whitespace-nowrap">
-              Horários 2026
-            </h1>
-            <p className="text-sm font-bold uppercase tracking-[0.4em] text-emerald-400 md:text-xl">
-              Colégio Estadual Satélite
-            </p>
+        <section className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-6 md:p-8 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-baseline gap-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">
+                Horários 2026
+              </h1>
+              <span className="hidden md:inline-block text-sm uppercase tracking-[0.35em] font-semibold text-emerald-300">
+                Colégio Estadual Satélite
+              </span>
+            </div>
+
+            <div className="ml-0 md:ml-4 flex items-center gap-2">
+              <span className="inline-block md:hidden text-sm uppercase tracking-[0.35em] font-semibold text-emerald-300">Colégio Estadual Satélite</span>
+            </div>
           </div>
         </section>
 
-        <section className="space-y-10">
+        <section className="space-y-8">
           {/* Teacher Section */}
-          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-8 shadow-2xl">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-6 md:px-6 md:py-8 shadow-lg">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Docente</p>
-                <h2 className="text-2xl font-black text-white">{selectedTeacher}</h2>
+                <p className="text-xs font-bold uppercase tracking-wide text-white/50">Visão por Docente</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-white truncate">{selectedTeacher}</h2>
               </div>
               <div className="w-full max-w-sm">
                 <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
-                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                  <SelectTrigger className="h-11 w-full rounded-lg border-white/10 bg-slate-900/50 text-slate-100">
                     <SelectValue placeholder="Escolha um professor" />
                   </SelectTrigger>
-                  <SelectContent className="border-white/10 bg-slate-900 text-white">
+                  <SelectContent className="bg-slate-950 text-white">
                     {teacherSchedules.map((teacher) => (
-                      <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
+                      <SelectItem key={teacher.name} className="text-sm text-white" value={teacher.name}>
                         {teacher.name}
                       </SelectItem>
                     ))}
@@ -83,20 +89,20 @@ const Index = () => {
           </div>
 
           {/* Class Section */}
-          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-6 py-8 shadow-2xl">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-4 py-6 md:px-6 md:py-8 shadow-lg">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Turma</p>
-                <h2 className="text-2xl font-black text-white">{selectedClass}</h2>
+                <p className="text-xs font-bold uppercase tracking-wide text-white/50">Visão por Turma</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-white truncate">{selectedClass}</h2>
               </div>
               <div className="w-full max-w-sm">
                 <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                  <SelectTrigger className="h-11 w-full rounded-lg border-white/10 bg-slate-900/50 text-slate-100">
                     <SelectValue placeholder="Escolha uma turma" />
                   </SelectTrigger>
-                  <SelectContent className="border-white/10 bg-slate-900 text-white">
+                  <SelectContent className="bg-slate-950 text-white">
                     {classSchedules.map((classItem) => (
-                      <SelectItem key={classItem.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={classItem.name}>
+                      <SelectItem key={classItem.name} className="text-sm text-white" value={classItem.name}>
                         {classItem.name}
                       </SelectItem>
                     ))}

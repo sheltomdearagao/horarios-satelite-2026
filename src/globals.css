@@ -95,10 +95,16 @@
     @apply border-border;
   }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
 
+  /* hide scrollbars while keeping scroll functionality */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
