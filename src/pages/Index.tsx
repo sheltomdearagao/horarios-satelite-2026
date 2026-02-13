@@ -5,13 +5,17 @@ import { ScheduleGrid } from "@/components/ScheduleGrid";
 import { classSchedules, classColorMap, teacherSchedules } from "@/data/schedule";
 import type { Lesson } from "@/data/schedule";
 
+const getSubjectCode = (lessonName: string) => {
+  const segments = lessonName.split("-").map((segment) => segment.trim());
+  return segments[segments.length - 1];
+};
+
 const Index = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(teacherSchedules[0]?.name ?? "");
   const [selectedClass, setSelectedClass] = useState(classSchedules[0]?.name ?? "");
   
-  // Independent highlight states for each section
-  const [activeClassTeacher, setActiveClassTeacher] = useState<string | null>(null);
-  const [activeClassGroup, setActiveClassGroup] = useState<string | null>(null);
+  const [activeSubjectTeacher, setActiveSubjectTeacher] = useState<string | null>(null);
+  const [activeSubjectGroup, setActiveSubjectGroup] = useState<string | null>(null);
 
   const teacherMap = useMemo(
     () => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])),
@@ -27,11 +31,13 @@ const Index = () => {
   const currentClassSchedule = classMap.get(selectedClass) ?? classSchedules[0];
 
   const handleTeacherLessonClick = (lesson: Lesson) => {
-    setActiveClassTeacher((current) => (current === lesson.classGroup ? null : lesson.classGroup));
+    const subjectCode = getSubjectCode(lesson.className);
+    setActiveSubjectTeacher((current) => (current === subjectCode ? null : subjectCode));
   };
 
   const handleClassLessonClick = (lesson: Lesson) => {
-    setActiveClassGroup((current) => (current === lesson.classGroup ? null : lesson.classGroup));
+    const subjectCode = getSubjectCode(lesson.className);
+    setActiveSubjectGroup((current) => (current === subjectCode ? null : subjectCode));
   };
 
   return (
@@ -47,15 +53,15 @@ const Index = () => {
                 Colégio Estadual Satélite
               </span>
             </div>
-
             <div className="ml-0 md:ml-4 flex items-center gap-2">
-              <span className="inline-block md:hidden text-sm uppercase tracking-[0.35em] font-semibold text-emerald-300">Colégio Estadual Satélite</span>
+              <span className="inline-block md:hidden text-sm uppercase tracking-[0.35em] font-semibold text-emerald-300">
+                Colégio Estadual Satélite
+              </span>
             </div>
           </div>
         </section>
 
         <section className="space-y-8">
-          {/* Teacher Section */}
           <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-6 md:px-6 md:py-8 shadow-lg">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
@@ -82,13 +88,12 @@ const Index = () => {
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
                 onLessonClick={handleTeacherLessonClick}
-                activeClass={activeClassTeacher}
+                activeSubject={activeSubjectTeacher}
                 showTeacher={false}
               />
             )}
           </div>
 
-          {/* Class Section */}
           <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-4 py-6 md:px-6 md:py-8 shadow-lg">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
@@ -115,7 +120,7 @@ const Index = () => {
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
                 onLessonClick={handleClassLessonClick}
-                activeClass={activeClassGroup}
+                activeSubject={activeSubjectGroup}
                 showTeacher={true}
               />
             )}
