@@ -5,17 +5,13 @@ type ScheduleByDay = Record<DayName, { morning: Lesson[]; afternoon: Lesson[] }>
 
 interface ScheduleGridProps {
   scheduleByDay: ScheduleByDay;
-  activeSubject: string | null;
+  activeKey: string | null;
   onLessonClick: (lesson: Lesson) => void;
   classColorMap: Map<string, string>;
   showTeacher?: boolean;
   highlightColor?: string;
+  getLessonKey: (lesson: Lesson) => string;
 }
-
-const getSubjectCode = (lessonName: string) => {
-  const segments = lessonName.split("-").map((segment) => segment.trim());
-  return segments[segments.length - 1];
-};
 
 const hexToRgba = (hex: string, alpha: number) => {
   const sanitized = hex.replace("#", "");
@@ -46,41 +42,48 @@ const LessonCard = ({
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "relative flex w-full items-start gap-3 rounded-2xl border bg-white/95 px-3 py-2 md:px-4 md:py-3 text-left shadow-sm transition-all duration-200",
-      "hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60",
-      isActive ? "shadow-[0_15px_40px_rgba(15,23,42,0.35)]" : "border-white/20"
+      "relative flex w-full items-start gap-3 rounded-2xl border bg-white px-3 py-2 md:px-4 md:py-3 text-left transition-all duration-300",
+      "hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
+      isActive 
+        ? "scale-[1.02] z-10 border-2" 
+        : "border-slate-100 shadow-sm"
     )}
     style={{
-      borderLeftWidth: isActive ? undefined : 6,
-      borderLeftColor: isActive ? highlightColor : accent,
-      boxShadow: isActive ? `0 18px 35px ${hexToRgba(highlightColor, 0.25)}` : undefined,
-      backgroundColor: isActive ? hexToRgba(highlightColor, 0.12) : undefined,
+      borderColor: isActive ? highlightColor : undefined,
+      boxShadow: isActive ? `0 20px 40px ${hexToRgba(highlightColor, 0.25)}` : undefined,
     }}
   >
     <span
-      className="mt-0.5 h-9 w-1.5 rounded-full md:h-10"
+      className="mt-0.5 h-9 w-1.5 rounded-full shrink-0 md:h-10"
       style={{
-        backgroundColor: accent,
+        backgroundColor: isActive ? highlightColor : accent,
       }}
     />
     <div className="flex flex-1 flex-col gap-1 overflow-hidden">
       <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
-        <span className={cn(isActive && "text-emerald-600")}>{lesson.periodLabel}</span>
+        <span className={cn(isActive && "font-black")} style={{ color: isActive ? highlightColor : undefined }}>
+          {lesson.periodLabel}
+        </span>
         <span className="text-[0.55rem] text-slate-400">
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-sm md:text-base font-semibold leading-tight text-slate-900 truncate">{lesson.className}</p>
+      <p className="text-sm md:text-base font-bold leading-tight text-slate-900 truncate">
+        {lesson.className}
+      </p>
       <div className="flex items-center justify-between text-[0.7rem] text-slate-500">
         <span className="font-medium uppercase tracking-[0.25em]">{lesson.time}</span>
         {isActive && (
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-emerald-700">
-            Selecionada
+          <span 
+            className="rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.1em]"
+            style={{ backgroundColor: hexToRgba(highlightColor, 0.1), color: highlightColor }}
+          >
+            Ativa
           </span>
         )}
       </div>
       {showTeacher && (
-        <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-600 truncate">
+        <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-slate-600 truncate">
           Prof(a). {lesson.teacher}
         </p>
       )}
@@ -90,11 +93,12 @@ const LessonCard = ({
 
 export const ScheduleGrid = ({
   scheduleByDay,
-  activeSubject,
+  activeKey,
   onLessonClick,
   classColorMap,
   showTeacher = false,
   highlightColor = "#34d399",
+  getLessonKey,
 }: ScheduleGridProps) => (
   <div className="-mx-4 overflow-x-auto pb-4 scrollbar-hide">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
@@ -106,39 +110,30 @@ export const ScheduleGrid = ({
 
         if (totalCount === 0) return null;
 
-        const baseHeight = 120;
-        const perLessonHeight = 72;
-        const minHeight = Math.max(150, baseHeight + totalCount * perLessonHeight);
-
         return (
           <article
             key={day}
-            className="flex-shrink-0 snap-start rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl transition-transform duration-200 hover:-translate-y-[2px]"
+            className="flex-shrink-0 snap-start rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl"
             style={{
               width: "84vw",
-              maxWidth: 420,
-              minHeight: `${minHeight}px`,
+              maxWidth: 400,
             }}
           >
-            <header className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-              <h3 className="text-base md:text-lg font-semibold uppercase tracking-wider text-white">{day}</h3>
-              <span className="text-xs md:text-sm font-semibold uppercase tracking-tight text-white/50">
-                {totalCount} aula{totalCount !== 1 && "s"}
+            <header className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
+              <h3 className="text-base md:text-lg font-bold uppercase tracking-widest text-white">{day}</h3>
+              <span className="text-[0.65rem] font-bold text-white/40">
+                {totalCount} AULAS
               </span>
             </header>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               {morningCount > 0 && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-black uppercase tracking-[0.35em] text-emerald-400/80">Manhã</p>
-                    <p className="text-xs uppercase tracking-tight text-white/50">{morningCount} aula(s)</p>
-                  </div>
+                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
                   <div className="flex flex-col gap-3">
                     {dayLessons.morning.map((lesson) => {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
-                      const subjectCode = getSubjectCode(lesson.className);
-                      const isActive = subjectCode === activeSubject;
+                      const isActive = getLessonKey(lesson) === activeKey;
                       return (
                         <LessonCard
                           key={lesson.id}
@@ -157,15 +152,11 @@ export const ScheduleGrid = ({
 
               {afternoonCount > 0 && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-black uppercase tracking-[0.35em] text-amber-400/80">Tarde</p>
-                    <p className="text-xs uppercase tracking-tight text-white/50">{afternoonCount} aula(s)</p>
-                  </div>
+                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
                   <div className="flex flex-col gap-3">
                     {dayLessons.afternoon.map((lesson) => {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
-                      const subjectCode = getSubjectCode(lesson.className);
-                      const isActive = subjectCode === activeSubject;
+                      const isActive = getLessonKey(lesson) === activeKey;
                       return (
                         <LessonCard
                           key={lesson.id}
