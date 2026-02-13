@@ -8,7 +8,10 @@ import type { Lesson } from "@/data/schedule";
 const Index = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(teacherSchedules[0]?.name ?? "");
   const [selectedClass, setSelectedClass] = useState(classSchedules[0]?.name ?? "");
-  const [activeClass, setActiveClass] = useState<string | null>(null);
+  
+  // Independent highlight states for each section
+  const [activeClassTeacher, setActiveClassTeacher] = useState<string | null>(null);
+  const [activeClassGroup, setActiveClassGroup] = useState<string | null>(null);
 
   const teacherMap = useMemo(
     () => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])),
@@ -23,27 +26,25 @@ const Index = () => {
   const currentTeacher = teacherMap.get(selectedTeacher) ?? teacherSchedules[0];
   const currentClassSchedule = classMap.get(selectedClass) ?? classSchedules[0];
 
-  const handleLessonClick = (lesson: Lesson) => {
-    setActiveClass((current) => (current === lesson.classGroup ? null : lesson.classGroup));
+  const handleTeacherLessonClick = (lesson: Lesson) => {
+    setActiveClassTeacher((current) => (current === lesson.classGroup ? null : lesson.classGroup));
+  };
+
+  const handleClassLessonClick = (lesson: Lesson) => {
+    setActiveClassGroup((current) => (current === lesson.classGroup ? null : lesson.classGroup));
   };
 
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
         <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-8 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl space-y-2">
-              <p className="text-xs font-bold uppercase tracking-[0.5em] text-emerald-400">Sistema de Gestão</p>
-              <h1 className="text-3xl font-black leading-tight text-white md:text-5xl">
-                Horários Colégio Estadual Satélite 2026
-              </h1>
-            </div>
-            <div className="flex flex-col gap-2 rounded-2xl border border-white/20 bg-white/10 p-4 text-center shadow-xl backdrop-blur-md">
-              <p className="text-[0.6rem] font-black uppercase tracking-widest text-white/60">Turma em foco</p>
-              <p className="text-lg font-bold text-emerald-300">
-                {activeClass ?? "Nenhuma selecionada"}
-              </p>
-            </div>
+          <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-6">
+            <h1 className="text-4xl font-black text-white md:text-6xl whitespace-nowrap">
+              Horários 2026
+            </h1>
+            <p className="text-sm font-bold uppercase tracking-[0.4em] text-emerald-400 md:text-xl">
+              Colégio Estadual Satélite
+            </p>
           </div>
         </section>
 
@@ -74,8 +75,8 @@ const Index = () => {
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
-                onLessonClick={handleLessonClick}
-                activeClass={activeClass}
+                onLessonClick={handleTeacherLessonClick}
+                activeClass={activeClassTeacher}
                 showTeacher={false}
               />
             )}
@@ -107,8 +108,8 @@ const Index = () => {
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
-                onLessonClick={handleLessonClick}
-                activeClass={activeClass}
+                onLessonClick={handleClassLessonClick}
+                activeClass={activeClassGroup}
                 showTeacher={true}
               />
             )}

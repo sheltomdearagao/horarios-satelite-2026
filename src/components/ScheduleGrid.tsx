@@ -29,30 +29,42 @@ const LessonCard = ({
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "group flex w-full items-start gap-3 rounded-[1.5rem] border border-white/20 bg-white/95 px-4 py-3 text-left shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]",
-      isActive && "ring-2 ring-offset-2 ring-white/70",
+      "group flex w-full items-start gap-3 rounded-[1.5rem] border transition-all duration-300 text-left shadow-md active:scale-[0.98]",
+      isActive 
+        ? "bg-white border-emerald-400 ring-4 ring-emerald-400/30 scale-[1.03] shadow-[0_10px_25px_rgba(52,211,153,0.4)] z-10" 
+        : "bg-white/95 border-white/20 hover:border-white/40 hover:shadow-lg"
     )}
     style={{
-      borderColor: accent,
+      borderLeftColor: isActive ? undefined : accent,
+      borderLeftWidth: isActive ? undefined : "6px"
     }}
   >
-    <span
-      className="mt-0.5 h-10 w-1.5 rounded-full"
-      style={{
-        backgroundColor: accent,
-      }}
-    />
-    <div className="flex flex-1 flex-col gap-0.5">
+    {isActive && (
+      <span 
+        className="absolute -left-1 top-1/2 -translate-y-1/2 h-8 w-1.5 rounded-full bg-emerald-500"
+      />
+    )}
+    {!isActive && (
+      <span
+        className="mt-0.5 h-10 w-1.5 rounded-full shrink-0"
+        style={{
+          backgroundColor: accent,
+        }}
+      />
+    )}
+    <div className="flex flex-1 flex-col gap-0.5 overflow-hidden">
       <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-widest text-slate-500">
-        <span>{lesson.periodLabel}</span>
+        <span className={cn(isActive && "text-emerald-600")}>{lesson.periodLabel}</span>
         <span className="text-[0.5rem] text-slate-400">
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-sm font-bold leading-tight text-slate-900">{lesson.className}</p>
+      <p className={cn("text-sm font-bold leading-tight truncate", isActive ? "text-emerald-900" : "text-slate-900")}>
+        {lesson.className}
+      </p>
       <p className="text-[0.7rem] font-medium text-slate-500">{lesson.time}</p>
       {showTeacher && (
-        <p className="mt-0.5 text-[0.65rem] font-semibold text-slate-600">
+        <p className="mt-0.5 text-[0.65rem] font-semibold text-slate-600 truncate">
           {lesson.teacher}
         </p>
       )}
@@ -67,7 +79,7 @@ export const ScheduleGrid = ({
   classColorMap,
   showTeacher = false,
 }: ScheduleGridProps) => (
-  <div className="-mx-4 overflow-x-auto pb-2 scrollbar-hide">
+  <div className="-mx-4 overflow-x-auto pb-4 scrollbar-hide">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
       {days.map((day) => {
         const dayLessons = scheduleByDay[day];
