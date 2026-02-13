@@ -22,10 +22,17 @@ const afternoonSlots = [
 
 const periodOrder = ["1ª", "2ª", "3ª", "4ª", "5ª", "6ª", "7ª", "8ª", "9ª", "10ª"];
 
+const classGroups = [
+  "8º AM", "8º BM", "9º AM", "9º BM", "2º AM", "2º BM", "3º AM", "3º BM",
+  "1º AI - P", "1º BI", "1º CI", "2º A Int",
+  "6º AV", "6º BV", "7º AV", "7º BV", "8º AV", "9º AV"
+];
+
 interface Lesson {
   id: string;
   teacher: string;
-  className: string;
+  className: string; // Full name e.g. "3º AM - CPEP"
+  classGroup: string; // Group name e.g. "3º AM"
   day: DayName;
   shift: Shift;
   slot: number;
@@ -44,6 +51,17 @@ interface ClassSchedule {
   lessons: Lesson[];
   scheduleByDay: Record<DayName, { morning: Lesson[]; afternoon: Lesson[] }>;
 }
+
+const findClassGroup = (lessonName: string): string => {
+  // Sort groups by length descending to match longest prefix first (e.g. "1º AI - P" before "1º AI")
+  const sortedGroups = [...classGroups].sort((a, b) => b.length - a.length);
+  for (const group of sortedGroups) {
+    if (lessonName.startsWith(group)) {
+      return group;
+    }
+  }
+  return "Outros";
+};
 
 const rawCsv = `
 Professor,Aula,Segunda,Terça,Quarta,Quinta,Sexta
@@ -230,7 +248,7 @@ Sheltom,1ª,2º BM - LP,8º BM - LP,,,
 ,3ª,2º A Int - LC,8º AM - LP,,8º BM - LP,1º CI - LC
 ,4ª,8º AM - LP,1º CI - LC,,8º AM - LP,8º AM - LP
 ,5ª,,2º BM - LP,,2º AM - LP,
-,6ª,,2º A Int - LC,,8º AV - LP,
+,6ª,,2º A Int - LC,,8 AV - LP,
 ,7ª,,8º AV - LP,,8º AV - LP,
 ,8ª,,8º AV - LP,,1º BI - LC,
 ,,,,,,
@@ -307,6 +325,7 @@ const parseCsv = (csv: string): TeacherSchedule[] => {
         id: `${teacherName}-${dayName}-${periodLabel}-${slot}`,
         teacher: teacherName,
         className: lessonName,
+        classGroup: findClassGroup(lessonName),
         day: dayName,
         shift,
         slot,
@@ -369,13 +388,14 @@ const groupByDay = (lessons: Lesson[]): Record<DayName, { morning: Lesson[]; aft
 const classLessonsMap = new Map<string, Lesson[]>();
 teacherSchedules.forEach((teacher) => {
   teacher.lessons.forEach((lesson) => {
-    const bucket = classLessonsMap.get(lesson.className) ?? [];
+    const bucket = classLessonsMap.get(lesson.classGroup) ?? [];
     bucket.push(lesson);
-    classLessonsMap.set(lesson.className, bucket);
+    classLessonsMap.set(lesson.classGroup, bucket);
   });
 });
 
-const classSchedules: ClassSchedule[] = Array.from(classLessonsMap.entries()).map(([name, lessons]) => {
+const classSchedules: ClassSchedule[] = classGroups.map((groupName) => {
+  const lessons = classLessonsMap.get(groupName) ?? [];
   const sortedLessons = [...lessons];
   const dayOrder: Record<DayName, number> = days.reduce((acc, day, idx) => {
     acc[day] = idx;
@@ -390,7 +410,7 @@ const classSchedules: ClassSchedule[] = Array.from(classLessonsMap.entries()).ma
   });
 
   return {
-    name,
+    name: groupName,
     lessons: sortedLessons,
     scheduleByDay: groupByDay(sortedLessons),
   };
@@ -437,5 +457,6 @@ export {
   classSchedules,
   classScheduleMap,
   classColorMap,
+  classGroups,
 };
 export type { DayName, Lesson, TeacherSchedule, ClassSchedule };

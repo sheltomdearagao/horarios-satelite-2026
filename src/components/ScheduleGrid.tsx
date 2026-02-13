@@ -67,7 +67,7 @@ export const ScheduleGrid = ({
   classColorMap,
   showTeacher = false,
 }: ScheduleGridProps) => (
-  <div className="-mx-2 overflow-x-auto pb-6">
+  <div className="-mx-2 overflow-x-auto pb-6 scrollbar-hide">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-2">
       {days.map((day) => {
         const dayLessons = scheduleByDay[day];
@@ -97,14 +97,14 @@ export const ScheduleGrid = ({
                 <div className="space-y-3">
                   {hasMorning ? (
                     dayLessons.morning.map((lesson) => {
-                      const accent = classColorMap.get(lesson.className) ?? "#A855F7";
+                      const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       return (
                         <LessonCard
                           key={lesson.id}
                           lesson={lesson}
                           accent={accent}
                           showTeacher={showTeacher}
-                          isActive={lesson.className === activeClass}
+                          isActive={lesson.classGroup === activeClass}
                           onClick={() => onLessonClick(lesson)}
                         />
                       );
@@ -125,14 +125,14 @@ export const ScheduleGrid = ({
                 <div className="space-y-3">
                   {hasAfternoon ? (
                     dayLessons.afternoon.map((lesson) => {
-                      const accent = classColorMap.get(lesson.className) ?? "#A855F7";
+                      const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       return (
                         <LessonCard
                           key={lesson.id}
                           lesson={lesson}
                           accent={accent}
                           showTeacher={showTeacher}
-                          isActive={lesson.className === activeClass}
+                          isActive={lesson.classGroup === activeClass}
                           onClick={() => onLessonClick(lesson)}
                         />
                       );

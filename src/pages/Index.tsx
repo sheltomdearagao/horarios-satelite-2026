@@ -25,7 +25,7 @@ const Index = () => {
   const currentClassSchedule = classMap.get(selectedClass) ?? classSchedules[0];
 
   const handleLessonClick = (lesson: Lesson) => {
-    setActiveClass((current) => (current === lesson.className ? null : lesson.className));
+    setActiveClass((current) => (current === lesson.classGroup ? null : lesson.classGroup));
   };
 
   return (
