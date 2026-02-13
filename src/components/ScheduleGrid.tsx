@@ -29,7 +29,7 @@ const LessonCard = ({
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "group flex w-full items-start gap-3 rounded-[1.9rem] border border-white/30 bg-white/95 px-4 py-3 text-left shadow-[0_15px_40px_rgba(15,23,42,0.25)] transition-all duration-200 hover:-translate-y-0.5",
+      "group flex w-full items-start gap-3 rounded-[1.5rem] border border-white/20 bg-white/95 px-4 py-3 text-left shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]",
       isActive && "ring-2 ring-offset-2 ring-white/70",
     )}
     style={{
@@ -37,23 +37,23 @@ const LessonCard = ({
     }}
   >
     <span
-      className="mt-0.5 h-10 w-1.5 rounded-2xl"
+      className="mt-0.5 h-10 w-1.5 rounded-full"
       style={{
         backgroundColor: accent,
       }}
     />
-    <div className="flex flex-1 flex-col gap-1">
-      <div className="flex items-center justify-between text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
+    <div className="flex flex-1 flex-col gap-0.5">
+      <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-widest text-slate-500">
         <span>{lesson.periodLabel}</span>
-        <span className="text-right text-[0.55rem] tracking-[0.4em] text-slate-400">
+        <span className="text-[0.5rem] text-slate-400">
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-base font-semibold leading-tight text-slate-900">{lesson.className}</p>
-      <p className="text-sm font-medium uppercase tracking-[0.25em] text-slate-400">{lesson.time}</p>
+      <p className="text-sm font-bold leading-tight text-slate-900">{lesson.className}</p>
+      <p className="text-[0.7rem] font-medium text-slate-500">{lesson.time}</p>
       {showTeacher && (
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
-          Prof(a). {lesson.teacher}
+        <p className="mt-0.5 text-[0.65rem] font-semibold text-slate-600">
+          {lesson.teacher}
         </p>
       )}
     </div>
@@ -67,36 +67,33 @@ export const ScheduleGrid = ({
   classColorMap,
   showTeacher = false,
 }: ScheduleGridProps) => (
-  <div className="-mx-2 overflow-x-auto pb-6 scrollbar-hide">
-    <div className="flex w-max gap-4 snap-x snap-mandatory px-2">
+  <div className="-mx-4 overflow-x-auto pb-2 scrollbar-hide">
+    <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
       {days.map((day) => {
         const dayLessons = scheduleByDay[day];
         const hasMorning = dayLessons.morning.length > 0;
         const hasAfternoon = dayLessons.afternoon.length > 0;
 
+        if (!hasMorning && !hasAfternoon) return null;
+
         return (
           <article
             key={day}
-            className="flex-shrink-0 snap-start w-[320px] rounded-[2rem] border border-white/15 bg-white/5 p-5 shadow-[0_25px_60px_rgba(15,23,42,0.35)] transition-all duration-200 hover:-translate-y-1"
+            className="flex-shrink-0 snap-start w-[280px] rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-xl"
           >
-            <header className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold uppercase tracking-[0.35em] text-white">{day}</h3>
-              <span className="text-xs font-semibold uppercase tracking-[0.4em] text-white/60">
-                {hasMorning || hasAfternoon ? "Ativo" : "Folga"}
+            <header className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
+              <h3 className="text-base font-bold uppercase tracking-widest text-white">{day}</h3>
+              <span className="text-[0.6rem] font-bold uppercase tracking-tighter text-white/40">
+                {dayLessons.morning.length + dayLessons.afternoon.length} AULAS
               </span>
             </header>
 
-            <div className="mt-5 space-y-5">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">Manhã</p>
-                  <p className="text-xs uppercase tracking-[0.4em] text-white/50">
-                    {dayLessons.morning.length} aula(s)
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {hasMorning ? (
-                    dayLessons.morning.map((lesson) => {
+            <div className="space-y-6">
+              {hasMorning && (
+                <div className="space-y-2">
+                  <p className="text-[0.65rem] font-black uppercase tracking-widest text-emerald-400/80">Manhã</p>
+                  <div className="space-y-2">
+                    {dayLessons.morning.map((lesson) => {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       return (
                         <LessonCard
@@ -108,23 +105,16 @@ export const ScheduleGrid = ({
                           onClick={() => onLessonClick(lesson)}
                         />
                       );
-                    })
-                  ) : (
-                    <p className="text-sm text-slate-400">Sem aulas</p>
-                  )}
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">Tarde</p>
-                  <p className="text-xs uppercase tracking-[0.4em] text-white/50">
-                    {dayLessons.afternoon.length} aula(s)
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {hasAfternoon ? (
-                    dayLessons.afternoon.map((lesson) => {
+              {hasAfternoon && (
+                <div className="space-y-2">
+                  <p className="text-[0.65rem] font-black uppercase tracking-widest text-amber-400/80">Tarde</p>
+                  <div className="space-y-2">
+                    {dayLessons.afternoon.map((lesson) => {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       return (
                         <LessonCard
@@ -136,12 +126,10 @@ export const ScheduleGrid = ({
                           onClick={() => onLessonClick(lesson)}
                         />
                       );
-                    })
-                  ) : (
-                    <p className="text-sm text-slate-400">Sem aulas</p>
-                  )}
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </article>
         );

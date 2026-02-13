@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScheduleGrid } from "@/components/ScheduleGrid";
@@ -31,46 +30,39 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
-        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-6 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-xl space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-300">Painel de Horários</p>
-              <h1 className="text-3xl font-semibold leading-tight text-white md:text-4xl">
-                Grade inteligente para professores e turmas
+        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-8 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl space-y-2">
+              <p className="text-xs font-bold uppercase tracking-[0.5em] text-emerald-400">Sistema de Gestão</p>
+              <h1 className="text-3xl font-black leading-tight text-white md:text-5xl">
+                Horários Colégio Estadual Satélite 2026
               </h1>
-              <p className="text-base text-slate-200">
-                Um app preparado para dispositivos móveis que coloca o horário completo na ponta dos dedos. Escolha seu nome,
-                explore turmas e conte com uma cor exclusiva para cada classe, trazendo ordem visual à rotina semanal.
-              </p>
-              <p className="text-sm text-slate-300">
-                A interação foca no toque — ao selecionar qualquer aula, todos os cartões daquela turma brilham com o mesmo tom
-                por toda a semana.
-              </p>
             </div>
-            <div className="flex flex-col gap-3 rounded-3xl border border-white/20 bg-white/10 p-4 text-sm text-slate-100 shadow-lg">
-              <p className="font-semibold tracking-[0.35em] text-white/70">Turma em foco</p>
-              <p className="text-lg font-bold text-white">
-                {activeClass ?? "Clique em uma aula para destacar"}
+            <div className="flex flex-col gap-2 rounded-2xl border border-white/20 bg-white/10 p-4 text-center shadow-xl backdrop-blur-md">
+              <p className="text-[0.6rem] font-black uppercase tracking-widest text-white/60">Turma em foco</p>
+              <p className="text-lg font-bold text-emerald-300">
+                {activeClass ?? "Nenhuma selecionada"}
               </p>
             </div>
           </div>
         </section>
 
-        <section className="space-y-6">
-          <div className="flex flex-col gap-2 rounded-3xl border border-white/10 bg-white/5 px-5 py-6 shadow-[0_25px_60px_rgba(15,23,42,0.5)]">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Selecione o professor</p>
-                <h2 className="text-2xl font-semibold text-white">{selectedTeacher}</h2>
+        <section className="space-y-10">
+          {/* Teacher Section */}
+          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-8 shadow-2xl">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-1">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Docente</p>
+                <h2 className="text-2xl font-black text-white">{selectedTeacher}</h2>
               </div>
               <div className="w-full max-w-sm">
                 <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
-                  <SelectTrigger className="bg-slate-900/40 text-slate-100 shadow-lg">
+                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
                     <SelectValue placeholder="Escolha um professor" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-950 text-white">
+                  <SelectContent className="border-white/10 bg-slate-900 text-white">
                     {teacherSchedules.map((teacher) => (
-                      <SelectItem key={teacher.name} className="text-sm text-white" value={teacher.name}>
+                      <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
                         {teacher.name}
                       </SelectItem>
                     ))}
@@ -84,25 +76,26 @@ const Index = () => {
                 classColorMap={classColorMap}
                 onLessonClick={handleLessonClick}
                 activeClass={activeClass}
-                showTeacher
+                showTeacher={false}
               />
             )}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 to-slate-950/40 px-5 py-6 shadow-[0_25px_60px_rgba(15,23,42,0.6)]">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Selecione a turma</p>
-                <h2 className="text-2xl font-semibold text-white">{selectedClass}</h2>
+          {/* Class Section */}
+          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-6 py-8 shadow-2xl">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-1">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Turma</p>
+                <h2 className="text-2xl font-black text-white">{selectedClass}</h2>
               </div>
               <div className="w-full max-w-sm">
                 <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="bg-slate-900/40 text-slate-100 shadow-lg">
+                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
                     <SelectValue placeholder="Escolha uma turma" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-950 text-white">
+                  <SelectContent className="border-white/10 bg-slate-900 text-white">
                     {classSchedules.map((classItem) => (
-                      <SelectItem key={classItem.name} className="text-sm text-white" value={classItem.name}>
+                      <SelectItem key={classItem.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={classItem.name}>
                         {classItem.name}
                       </SelectItem>
                     ))}
@@ -116,21 +109,10 @@ const Index = () => {
                 classColorMap={classColorMap}
                 onLessonClick={handleLessonClick}
                 activeClass={activeClass}
-                showTeacher
+                showTeacher={true}
               />
             )}
           </div>
-        </section>
-
-        <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_25px_60px_rgba(15,23,42,0.4)]">
-          <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-[0.35em] text-white/60">Atalho rápido</p>
-            <Sparkles className="h-5 w-5 text-amber-300" />
-          </div>
-          <p className="mt-4 text-sm leading-relaxed text-slate-200">
-            Use este app como uma PWA no seu dispositivo. Fixe o atalho e tenha acesso off-line ao plano de aulas em segundos.
-            Combine os dois filtros para visualizar rapidamente quando uma turma aparece com um professor específico.
-          </p>
         </section>
       </div>
     </main>
