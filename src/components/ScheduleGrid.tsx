@@ -29,10 +29,8 @@ const LessonCard = ({
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "group flex w-full items-start gap-3 rounded-[1.9rem] border bg-white/90 px-4 py-3 text-left shadow-[0_15px_40px_rgba(15,23,42,0.25)] transition-all duration-200 hover:-translate-y-0.5",
-      isActive
-        ? "ring-2 ring-offset-2 ring-white/60 dark:ring-offset-slate-900"
-        : "border-white/30",
+      "group flex w-full items-start gap-3 rounded-[1.9rem] border border-white/30 bg-white/95 px-4 py-3 text-left shadow-[0_15px_40px_rgba(15,23,42,0.25)] transition-all duration-200 hover:-translate-y-0.5",
+      isActive && "ring-2 ring-offset-2 ring-white/70",
     )}
     style={{
       borderColor: accent,
@@ -51,12 +49,8 @@ const LessonCard = ({
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-base font-semibold leading-tight text-slate-900">
-        {lesson.className}
-      </p>
-      <p className="text-sm font-medium uppercase tracking-[0.25em] text-slate-400">
-        {lesson.time}
-      </p>
+      <p className="text-base font-semibold leading-tight text-slate-900">{lesson.className}</p>
+      <p className="text-sm font-medium uppercase tracking-[0.25em] text-slate-400">{lesson.time}</p>
       {showTeacher && (
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
           Prof(a). {lesson.teacher}
@@ -73,90 +67,86 @@ export const ScheduleGrid = ({
   classColorMap,
   showTeacher = false,
 }: ScheduleGridProps) => (
-  <div className="grid gap-4 md:grid-cols-2">
-    {days.map((day) => {
-      const dayLessons = scheduleByDay[day];
-      const hasMorning = dayLessons.morning.length > 0;
-      const hasAfternoon = dayLessons.afternoon.length > 0;
+  <div className="-mx-2 overflow-x-auto pb-6">
+    <div className="flex w-max gap-4 snap-x snap-mandatory px-2">
+      {days.map((day) => {
+        const dayLessons = scheduleByDay[day];
+        const hasMorning = dayLessons.morning.length > 0;
+        const hasAfternoon = dayLessons.afternoon.length > 0;
 
-      return (
-        <article
-          key={day}
-          className="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-[0_30px_60px_rgba(15,23,42,0.25)]"
-        >
-          <header className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold uppercase tracking-[0.35em] text-white">
-              {day}
-            </h3>
-            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-white/60">
-              {hasMorning || hasAfternoon ? "Ativo" : "Folga"}
-            </span>
-          </header>
+        return (
+          <article
+            key={day}
+            className="flex-shrink-0 snap-start w-[320px] rounded-[2rem] border border-white/15 bg-white/5 p-5 shadow-[0_25px_60px_rgba(15,23,42,0.35)] transition-all duration-200 hover:-translate-y-1"
+          >
+            <header className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold uppercase tracking-[0.35em] text-white">{day}</h3>
+              <span className="text-xs font-semibold uppercase tracking-[0.4em] text-white/60">
+                {hasMorning || hasAfternoon ? "Ativo" : "Folga"}
+              </span>
+            </header>
 
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">
-                  Manhã
-                </p>
-                <p className="text-xs uppercase tracking-[0.4em] text-white/50">
-                  {scheduleByDay[day].morning.length} aula(s)
-                </p>
-              </div>
+            <div className="mt-5 space-y-5">
               <div className="space-y-3">
-                {hasMorning ? (
-                  dayLessons.morning.map((lesson) => {
-                    const accent = classColorMap.get(lesson.className) ?? "#A855F7";
-                    return (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={lesson}
-                        accent={accent}
-                        showTeacher={showTeacher}
-                        isActive={lesson.className === activeClass}
-                        onClick={() => onLessonClick(lesson)}
-                      />
-                    );
-                  })
-                ) : (
-                  <p className="text-sm text-slate-400">Sem aulas programadas</p>
-                )}
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">Manhã</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/50">
+                    {dayLessons.morning.length} aula(s)
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {hasMorning ? (
+                    dayLessons.morning.map((lesson) => {
+                      const accent = classColorMap.get(lesson.className) ?? "#A855F7";
+                      return (
+                        <LessonCard
+                          key={lesson.id}
+                          lesson={lesson}
+                          accent={accent}
+                          showTeacher={showTeacher}
+                          isActive={lesson.className === activeClass}
+                          onClick={() => onLessonClick(lesson)}
+                        />
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-slate-400">Sem aulas</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">Tarde</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-white/50">
+                    {dayLessons.afternoon.length} aula(s)
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {hasAfternoon ? (
+                    dayLessons.afternoon.map((lesson) => {
+                      const accent = classColorMap.get(lesson.className) ?? "#A855F7";
+                      return (
+                        <LessonCard
+                          key={lesson.id}
+                          lesson={lesson}
+                          accent={accent}
+                          showTeacher={showTeacher}
+                          isActive={lesson.className === activeClass}
+                          onClick={() => onLessonClick(lesson)}
+                        />
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-slate-400">Sem aulas</p>
+                  )}
+                </div>
               </div>
             </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-300">
-                  Tarde
-                </p>
-                <p className="text-xs uppercase tracking-[0.4em] text-white/50">
-                  {scheduleByDay[day].afternoon.length} aula(s)
-                </p>
-              </div>
-              <div className="space-y-3">
-                {hasAfternoon ? (
-                  dayLessons.afternoon.map((lesson) => {
-                    const accent = classColorMap.get(lesson.className) ?? "#A855F7";
-                    return (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={lesson}
-                        accent={accent}
-                        showTeacher={showTeacher}
-                        isActive={lesson.className === activeClass}
-                        onClick={() => onLessonClick(lesson)}
-                      />
-                    );
-                  })
-                ) : (
-                  <p className="text-sm text-slate-400">Sem aulas programadas</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </article>
-      );
-    })}
+          </article>
+        );
+      })}
+    </div>
   </div>
 );
 

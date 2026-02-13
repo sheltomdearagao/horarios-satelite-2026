@@ -1,32 +1,10 @@
-
 import { useMemo, useState } from "react";
-import { CalendarDays, Layers, Sparkles, Users } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScheduleGrid } from "@/components/ScheduleGrid";
 import { classSchedules, classColorMap, teacherSchedules } from "@/data/schedule";
 import type { Lesson } from "@/data/schedule";
-
-const totalLessons = teacherSchedules.reduce((acc, teacher) => acc + teacher.lessons.length, 0);
-const uniqueClassCount = classSchedules.length;
-
-const stats = [
-  {
-    label: "Professores ativos",
-    value: teacherSchedules.length,
-    icon: Users,
-  },
-  {
-    label: "Turmas em acompanhamento",
-    value: uniqueClassCount,
-    icon: Layers,
-  },
-  {
-    label: "Aulas por semana",
-    value: totalLessons,
-    icon: CalendarDays,
-  },
-];
 
 const Index = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(teacherSchedules[0]?.name ?? "");
@@ -62,48 +40,17 @@ const Index = () => {
               </h1>
               <p className="text-base text-slate-200">
                 Um app preparado para dispositivos móveis que coloca o horário completo na ponta dos dedos. Escolha seu nome,
-                explore as turmas e acompanhe rapidamente os turnos com uma paleta cromática constante para cada turma.
+                explore turmas e conte com uma cor exclusiva para cada classe, trazendo ordem visual à rotina semanal.
+              </p>
+              <p className="text-sm text-slate-300">
+                A interação foca no toque — ao selecionar qualquer aula, todos os cartões daquela turma brilham com o mesmo tom
+                por toda a semana.
               </p>
             </div>
             <div className="flex flex-col gap-3 rounded-3xl border border-white/20 bg-white/10 p-4 text-sm text-slate-100 shadow-lg">
               <p className="font-semibold tracking-[0.35em] text-white/70">Turma em foco</p>
               <p className="text-lg font-bold text-white">
                 {activeClass ?? "Clique em uma aula para destacar"}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {stats.map((stat) => (
-              <article key={stat.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-[0.35em] text-white/60">{stat.label}</span>
-                  <stat.icon className="h-5 w-5 text-emerald-300" />
-                </div>
-                <p className="mt-3 text-3xl font-semibold text-white">{stat.value}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-[1.2fr,0.8fr]">
-            <div className="rounded-3xl border border-white/20 bg-white/5 p-4 shadow-xl">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/60">Modo de uso</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-200">
-                Utilize os menus suspensos para filtrar seu nome e turmas. Ao tocar em qualquer aula, todos os cartões dessa
-                turma escurecem o contorno e ajudam a visualizar cada ocorrência em manhã e tarde.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-4 shadow-xl">
-              <div className="relative h-32 overflow-hidden rounded-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80"
-                  alt="Professores planejando aulas"
-                  className="h-full w-full object-cover object-center"
-                />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" aria-hidden />
-              </div>
-              <p className="mt-4 text-sm text-white/80">
-                Cada turma recebe uma cor exclusiva e consistente. Assim você rapidamente reconhece os blocos na sequência de dias.
               </p>
             </div>
           </div>
