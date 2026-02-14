@@ -61,6 +61,15 @@ const LessonRow = ({
   );
 };
 
+const formatShortDateForButton = (d: Date) => {
+  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
+    .format(d)
+    .toUpperCase();
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `${weekday} - ${day}/${month}`;
+};
+
 const Index = () => {
   const [selectedTeacher, setSelectedTeacher] = useState(teacherSchedules[0]?.name ?? "");
   const [selectedClass, setSelectedClass] = useState(classSchedules[0]?.name ?? "");
@@ -97,7 +106,7 @@ const Index = () => {
   const now = new Date();
   const weekdayIndex = now.getDay();
   const todayName = weekdayIndexToDayName(weekdayIndex);
-  const todayLabel = new Intl.DateTimeFormat("pt-BR", {
+  const todayLabelFull = new Intl.DateTimeFormat("pt-BR", {
     weekday: "long",
     day: "2-digit",
     month: "long",
@@ -122,7 +131,9 @@ const Index = () => {
     return [...dayBucket.morning, ...dayBucket.afternoon];
   }, [todayClassSchedule?.scheduleByDay, todayMode, todayName, todayTeacherSchedule?.scheduleByDay]);
 
-  const monthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date>(now);
+
+  const monthDate = new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1);
 
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
@@ -168,7 +179,11 @@ const Index = () => {
                 </p>
               </DialogHeader>
               <div className="px-6 pb-6">
-                <CalendarPreview monthDate={monthDate} />
+                <CalendarPreview
+                  monthDate={monthDate}
+                  selectedDate={selectedCalendarDate}
+                  onSelectDate={(d) => setSelectedCalendarDate(d)}
+                />
               </div>
             </DialogContent>
           </Dialog>
@@ -186,7 +201,7 @@ const Index = () => {
                   </span>
                 </span>
                 <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">
-                  {todayLabel}
+                  {formatShortDateForButton(now)}
                 </span>
               </Button>
             </DialogTrigger>
@@ -237,7 +252,7 @@ const Index = () => {
                         {todayMode === "teacher" ? todayTeacher : todayClass}
                       </p>
                       <p className="mt-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/55">
-                        {todayLabel}
+                        {todayLabelFull}
                       </p>
                     </div>
 

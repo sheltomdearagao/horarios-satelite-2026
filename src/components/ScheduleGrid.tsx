@@ -44,8 +44,8 @@ const LessonCard = ({
     className={cn(
       "relative flex w-full items-start gap-3 rounded-2xl border bg-white px-3 py-2 md:px-4 md:py-3 text-left transition-all duration-300",
       "hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
-      isActive 
-        ? "scale-[1.02] z-10 border-2" 
+      isActive
+        ? "scale-[1.02] z-10 border-2"
         : "border-slate-100 shadow-sm"
     )}
     style={{
@@ -73,14 +73,6 @@ const LessonCard = ({
       </p>
       <div className="flex items-center justify-between text-[0.7rem] text-slate-500">
         <span className="font-medium uppercase tracking-[0.25em]">{lesson.time}</span>
-        {isActive && (
-          <span 
-            className="rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.1em]"
-            style={{ backgroundColor: hexToRgba(highlightColor, 0.1), color: highlightColor }}
-          >
-            Ativa
-          </span>
-        )}
       </div>
       {showTeacher && (
         <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-slate-600 truncate">
