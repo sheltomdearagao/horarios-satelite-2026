@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { DayName, Lesson, days } from "@/data/schedule";
+import { DayName, Lesson, days, morningSlots, afternoonSlots } from "@/data/schedule";
 
 type ScheduleByDay = Record<DayName, { morning: Lesson[]; afternoon: Lesson[] }>;
 
@@ -91,6 +91,28 @@ const LessonCard = ({
   </button>
 );
 
+const EmptySlotCard = ({
+  slotInfo,
+  shift,
+}: {
+  slotInfo: { label: string; time: string };
+  shift: "morning" | "afternoon";
+}) => (
+  <div className="relative flex w-full items-start gap-3 rounded-2xl border border-slate-50 bg-white/40 px-3 py-2 md:px-4 md:py-3 text-left shadow-sm opacity-50">
+    <span className="mt-0.5 h-9 w-1.5 rounded-full shrink-0 md:h-10 bg-slate-200" />
+    <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+      <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">
+        <span>{slotInfo.label}</span>
+        <span className="text-[0.55rem]">{shift === "morning" ? "MANHÃ" : "TARDE"}</span>
+      </div>
+      <p className="text-sm md:text-base font-bold leading-tight text-slate-300">-</p>
+      <div className="text-[0.7rem] text-slate-300">
+        <span className="font-medium uppercase tracking-[0.25em]">{slotInfo.time}</span>
+      </div>
+    </div>
+  </div>
+);
+
 export const ScheduleGrid = ({
   scheduleByDay,
   activeKey,
@@ -104,11 +126,6 @@ export const ScheduleGrid = ({
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
       {days.map((day) => {
         const dayLessons = scheduleByDay[day];
-        const morningCount = dayLessons.morning.length;
-        const afternoonCount = dayLessons.afternoon.length;
-        const totalCount = morningCount + afternoonCount;
-
-        if (totalCount === 0) return null;
 
         return (
           <article
@@ -121,17 +138,19 @@ export const ScheduleGrid = ({
           >
             <header className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
               <h3 className="text-base md:text-lg font-bold uppercase tracking-widest text-white">{day}</h3>
-              <span className="text-[0.65rem] font-bold text-white/40">
-                {totalCount} AULAS
+              <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">
+                Grade Completa
               </span>
             </header>
 
-            <div className="flex flex-col gap-6">
-              {morningCount > 0 && (
-                <div className="space-y-3">
-                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
-                  <div className="flex flex-col gap-3">
-                    {dayLessons.morning.map((lesson) => {
+            <div className="flex flex-col gap-8">
+              {/* Morning Shift */}
+              <div className="space-y-3">
+                <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
+                <div className="flex flex-col gap-3">
+                  {morningSlots.map((slotInfo, index) => {
+                    const lesson = dayLessons.morning.find((l) => l.slot === index);
+                    if (lesson) {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       const isActive = getLessonKey(lesson) === activeKey;
                       return (
@@ -145,16 +164,19 @@ export const ScheduleGrid = ({
                           onClick={() => onLessonClick(lesson)}
                         />
                       );
-                    })}
-                  </div>
+                    }
+                    return <EmptySlotCard key={`empty-m-${day}-${index}`} slotInfo={slotInfo} shift="morning" />;
+                  })}
                 </div>
-              )}
+              </div>
 
-              {afternoonCount > 0 && (
-                <div className="space-y-3">
-                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
-                  <div className="flex flex-col gap-3">
-                    {dayLessons.afternoon.map((lesson) => {
+              {/* Afternoon Shift */}
+              <div className="space-y-3">
+                <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
+                <div className="flex flex-col gap-3">
+                  {afternoonSlots.map((slotInfo, index) => {
+                    const lesson = dayLessons.afternoon.find((l) => l.slot === index);
+                    if (lesson) {
                       const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
                       const isActive = getLessonKey(lesson) === activeKey;
                       return (
@@ -168,10 +190,11 @@ export const ScheduleGrid = ({
                           onClick={() => onLessonClick(lesson)}
                         />
                       );
-                    })}
-                  </div>
+                    }
+                    return <EmptySlotCard key={`empty-a-${day}-${index}`} slotInfo={slotInfo} shift="afternoon" />;
+                  })}
                 </div>
-              )}
+              </div>
             </div>
           </article>
         );
