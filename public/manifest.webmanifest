@@ -1,5 +1,5 @@
 {
-  "name": "Horário Satélite",
+  "name": "Horários Colégio Estadual Satélite",
   "short_name": "Horário Satélite",
   "description": "Horários 2026 — Colégio Estadual Satélite",
   "start_url": "/",
@@ -13,6 +13,12 @@
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/CES_Logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
