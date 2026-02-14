@@ -8,6 +8,11 @@
   "background_color": "#0b1220",
   "theme_color": "#0b1220",
   "icons": [
-    { "src": "/CES_Logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    {
+      "src": "/CES_Logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
