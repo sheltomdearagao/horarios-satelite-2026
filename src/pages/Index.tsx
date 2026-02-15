@@ -199,7 +199,7 @@ const Index = () => {
         <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-1.5">
             <img
-              src="/icon-512-transparent.png"
+              src="/CES_Logo.png"
               alt="Logo C.E. Satélite"
               className="h-full w-full object-contain"
             />
