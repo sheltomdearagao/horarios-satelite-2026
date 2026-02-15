@@ -199,16 +199,14 @@ const Index = () => {
         <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-1.5">
             <img
-              src="/CES_Logo.png"
+              src="/icon-512-transparent.png"
               alt="Logo C.E. Satélite"
               className="h-full w-full object-contain"
             />
           </div>
           <div className="flex flex-col">
             <p className="text-2xl font-extrabold leading-tight text-white">Horários 2026</p>
-            <p className="mt-0.5 text-base font-medium leading-tight text-white/80">
-              Colégio Estadual Satélite
-            </p>
+            <p className="mt-0.5 text-base font-medium leading-tight text-white/80">Colégio Estadual Satélite</p>
           </div>
         </header>
 
@@ -234,11 +232,7 @@ const Index = () => {
                 <p className="text-sm text-white/70">Visual rápido do mês atual, no mesmo estilo da home.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
-                <CalendarPreview
-                  monthDate={monthDate}
-                  selectedDate={selectedCalendarDate}
-                  onSelectDate={(d) => setSelectedCalendarDate(d)}
-                />
+                <CalendarPreview monthDate={monthDate} selectedDate={selectedCalendarDate} onSelectDate={(d) => setSelectedCalendarDate(d)} />
               </div>
             </DialogContent>
           </Dialog>
@@ -290,9 +284,7 @@ const Index = () => {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-white/50">Filtro</p>
-                      <p className="mt-1 text-lg font-black text-white">
-                        {todayMode === "teacher" ? todayTeacher : todayClass}
-                      </p>
+                      <p className="mt-1 text-lg font-black text-white">{todayMode === "teacher" ? todayTeacher : todayClass}</p>
                       <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/55">{todayLabelFull}</p>
                     </div>
 
