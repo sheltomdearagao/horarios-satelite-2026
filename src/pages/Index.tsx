@@ -252,7 +252,7 @@ const Index = () => {
             <DialogContent className="max-w-[92vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-2xl">
               <DialogHeader className="px-6 pt-6">
                 <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Aulas de hoje</DialogTitle>
-                <p className="text-sm text-white/70">O sistema usa automaticamente o dia/horário do seu dispositivo.</p>
+                <p className="text-sm text-white/70">Selecione professor(a) ou turma.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
                 <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
