@@ -135,18 +135,18 @@ const NextLessonCard = ({
 };
 
 const Index = () => {
-  const [selectedTeacher, setSelectedTeacher] = useState(teacherSchedules[0]?.name ?? "");
-  const [selectedClass, setSelectedClass] = useState(classSchedules[0]?.name ?? "");
+  const [selectedTeacher, setSelectedTeacher] = useState<string>("");
+  const [selectedClass, setSelectedClass] = useState<string>("");
   const [activeKeyTeacher, setActiveKeyTeacher] = useState<string | null>(null);
   const [activeKeyGroup, setActiveKeyGroup] = useState<string | null>(null);
-  const [showTeacherSection, setShowTeacherSection] = useState(true);
-  const [showClassSection, setShowClassSection] = useState(true);
+  const [showTeacherSection, setShowTeacherSection] = useState(false);
+  const [showClassSection, setShowClassSection] = useState(false);
 
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
   const classMap = useMemo(() => new Map(classSchedules.map((classItem) => [classItem.name, classItem])), []);
 
-  const currentTeacher = teacherMap.get(selectedTeacher) ?? teacherSchedules[0];
-  const currentClassSchedule = classMap.get(selectedClass) ?? classSchedules[0];
+  const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
+  const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
 
   const handleTeacherLessonClick = (lesson: Lesson) => {
     const key = `${getSubjectCode(lesson.className)}|${lesson.classGroup}`;
@@ -196,13 +196,19 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
-        <header className="flex items-center gap-3 rounded-[1.75rem] border border-white/10 bg-[#0d1b2a] px-4 py-3 shadow-[0_25px_70px_rgba(3,7,18,0.65)]">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white p-1.5">
-            <img src="/icons/icon-192.png" alt="Logo C.E. Satélite" className="h-full w-full object-contain" />
+        <header className="flex items-center gap-4 rounded-[1.9rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_30px_80px_rgba(3,7,18,0.7)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2">
+            <img
+              src="/icon-512-transparent.png"
+              alt="Logo C.E. Satélite"
+              className="h-full w-full object-contain"
+            />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-xl font-bold text-white">Horários 2026</p>
-            <p className="text-sm font-medium text-white/80">Colégio Estadual Satélite</p>
+          <div className="flex flex-col">
+            <p className="text-[1.4rem] font-bold leading-tight text-white">Horários 2026</p>
+            <p className="mt-0.5 text-[0.95rem] font-medium leading-tight text-white/80">
+              Colégio Estadual Satélite
+            </p>
           </div>
         </header>
 
@@ -355,7 +361,13 @@ const Index = () => {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <div className="w-full max-w-sm">
-                  <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
+                  <Select
+                    value={selectedTeacher}
+                    onValueChange={(value) => {
+                      setSelectedTeacher(value);
+                      setShowTeacherSection(true);
+                    }}
+                  >
                     <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
                       <SelectValue placeholder="Escolha um professor" />
                     </SelectTrigger>
@@ -400,7 +412,13 @@ const Index = () => {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <div className="w-full max-w-sm">
-                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <Select
+                    value={selectedClass}
+                    onValueChange={(value) => {
+                      setSelectedClass(value);
+                      setShowClassSection(true);
+                    }}
+                  >
                     <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
                       <SelectValue placeholder="Escolha uma turma" />
                     </SelectTrigger>
