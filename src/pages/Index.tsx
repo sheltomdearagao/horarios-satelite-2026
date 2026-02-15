@@ -197,7 +197,7 @@ const Index = () => {
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
         <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-1.5">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-0.5">
             <img
               src="/icon-512-transparent.png"
               alt="Logo C.E. Satélite"
@@ -421,7 +421,7 @@ const Index = () => {
                     </SelectTrigger>
                     <SelectContent className="border-white/10 bg-slate-900 text-white">
                       {classSchedules.map((classItem) => (
-                        <SelectItem key={classItem.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={classItem.name}>
+                        <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
                           {classItem.name}
                         </SelectItem>
                       ))}
