@@ -6,7 +6,7 @@ import { classSchedules, classColorMap, teacherSchedules, days } from "@/data/sc
 import type { Lesson, DayName } from "@/data/schedule";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Clock, ChevronDown } from "lucide-react";
 import { CalendarPreview } from "@/components/CalendarPreview";
 
 const getSubjectCode = (lessonName: string) => {
@@ -139,6 +139,8 @@ const Index = () => {
   const [selectedClass, setSelectedClass] = useState(classSchedules[0]?.name ?? "");
   const [activeKeyTeacher, setActiveKeyTeacher] = useState<string | null>(null);
   const [activeKeyGroup, setActiveKeyGroup] = useState<string | null>(null);
+  const [showTeacherSection, setShowTeacherSection] = useState(true);
+  const [showClassSection, setShowClassSection] = useState(true);
 
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
   const classMap = useMemo(() => new Map(classSchedules.map((classItem) => [classItem.name, classItem])), []);
@@ -194,14 +196,15 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
-        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 p-8 shadow-[0_30px_90px_rgba(15,23,42,0.75)]">
-          <div className="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-6">
-            <h1 className="whitespace-nowrap text-4xl font-black text-white md:text-6xl">Horários 2026</h1>
-            <p className="text-sm font-bold uppercase tracking-[0.4em] text-emerald-400 md:text-xl">
-              Colégio Estadual Satélite
-            </p>
+        <header className="flex items-center gap-3 rounded-[1.75rem] border border-white/10 bg-[#0d1b2a] px-4 py-3 shadow-[0_25px_70px_rgba(3,7,18,0.65)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white p-1.5">
+            <img src="/icons/icon-192.png" alt="Logo C.E. Satélite" className="h-full w-full object-contain" />
           </div>
-        </section>
+          <div className="flex flex-col gap-1">
+            <p className="text-xl font-bold text-white">Horários 2026</p>
+            <p className="text-sm font-medium text-white/80">Colégio Estadual Satélite</p>
+          </div>
+        </header>
 
         <section className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
           <Dialog>
@@ -276,11 +279,11 @@ const Index = () => {
                 <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 sm:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Filtro</p>
+                      <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-white/50">Filtro</p>
                       <p className="mt-1 text-lg font-black text-white">
                         {todayMode === "teacher" ? todayTeacher : todayClass}
                       </p>
-                      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/55">{todayLabelFull}</p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/55">{todayLabelFull}</p>
                     </div>
 
                     <div className="w-full sm:max-w-sm">
@@ -347,25 +350,36 @@ const Index = () => {
           <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-8 shadow-2xl">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Docente</p>
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Docente</p>
                 <h2 className="text-2xl font-black text-white">{selectedTeacher}</h2>
               </div>
-              <div className="w-full max-w-sm">
-                <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
-                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
-                    <SelectValue placeholder="Escolha um professor" />
-                  </SelectTrigger>
-                  <SelectContent className="border-white/10 bg-slate-900 text-white">
-                    {teacherSchedules.map((teacher) => (
-                      <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
-                        {teacher.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="w-full max-w-sm">
+                  <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
+                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                      <SelectValue placeholder="Escolha um professor" />
+                    </SelectTrigger>
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                      {teacherSchedules.map((teacher) => (
+                        <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
+                          {teacher.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowTeacherSection((prev) => !prev)}
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
+                >
+                  {showTeacherSection ? "Recolher" : "Expandir"}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showTeacherSection ? "rotate-180" : ""}`} />
+                </Button>
               </div>
             </div>
-            {currentTeacher && (
+            {showTeacherSection && currentTeacher && (
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
@@ -381,25 +395,36 @@ const Index = () => {
           <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-6 py-8 shadow-2xl">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-white/40">Visão por Turma</p>
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Turma</p>
                 <h2 className="text-2xl font-black text-white">{selectedClass}</h2>
               </div>
-              <div className="w-full max-w-sm">
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
-                    <SelectValue placeholder="Escolha uma turma" />
-                  </SelectTrigger>
-                  <SelectContent className="border-white/10 bg-slate-900 text-white">
-                    {classSchedules.map((classItem) => (
-                      <SelectItem key={classItem.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={classItem.name}>
-                        {classItem.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="w-full max-w-sm">
+                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                      <SelectValue placeholder="Escolha uma turma" />
+                    </SelectTrigger>
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                      {classSchedules.map((classItem) => (
+                        <SelectItem key={classItem.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={classItem.name}>
+                          {classItem.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowClassSection((prev) => !prev)}
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
+                >
+                  {showClassSection ? "Recolher" : "Expandir"}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showClassSection ? "rotate-180" : ""}`} />
+                </Button>
               </div>
             </div>
-            {currentClassSchedule && (
+            {showClassSection && currentClassSchedule && (
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
