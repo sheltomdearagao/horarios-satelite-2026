@@ -196,8 +196,8 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
-        <header className="flex items-center gap-4 rounded-[1.9rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_30px_80px_rgba(3,7,18,0.7)]">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-2">
+        <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white p-1.5">
             <img
               src="/icon-512-transparent.png"
               alt="Logo C.E. Satélite"
@@ -205,8 +205,8 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <p className="text-[1.4rem] font-bold leading-tight text-white">Horários 2026</p>
-            <p className="mt-0.5 text-[0.95rem] font-medium leading-tight text-white/80">
+            <p className="text-2xl font-extrabold leading-tight text-white">Horários 2026</p>
+            <p className="mt-0.5 text-base font-medium leading-tight text-white/80">
               Colégio Estadual Satélite
             </p>
           </div>
@@ -234,7 +234,11 @@ const Index = () => {
                 <p className="text-sm text-white/70">Visual rápido do mês atual, no mesmo estilo da home.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
-                <CalendarPreview monthDate={monthDate} selectedDate={selectedCalendarDate} onSelectDate={(d) => setSelectedCalendarDate(d)} />
+                <CalendarPreview
+                  monthDate={monthDate}
+                  selectedDate={selectedCalendarDate}
+                  onSelectDate={(d) => setSelectedCalendarDate(d)}
+                />
               </div>
             </DialogContent>
           </Dialog>
@@ -357,7 +361,7 @@ const Index = () => {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Docente</p>
-                <h2 className="text-2xl font-black text-white">{selectedTeacher}</h2>
+                <h2 className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</h2>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <div className="w-full max-w-sm">
@@ -391,6 +395,7 @@ const Index = () => {
                 </Button>
               </div>
             </div>
+
             {showTeacherSection && currentTeacher && (
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
@@ -408,7 +413,7 @@ const Index = () => {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="space-y-1">
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Turma</p>
-                <h2 className="text-2xl font-black text-white">{selectedClass}</h2>
+                <h2 className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</h2>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <div className="w-full max-w-sm">
@@ -442,6 +447,7 @@ const Index = () => {
                 </Button>
               </div>
             </div>
+
             {showClassSection && currentClassSchedule && (
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
