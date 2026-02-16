@@ -154,21 +154,23 @@ Everton,1ª,2º A Int - EAM,,8º BM - GEO,8º BM - GEO,8º AM - GEO
 ,6ª,,,,2º A Int - SPG,8º AV - GEO
 ,7ª,,,,6º AV - GEO,8º AV - GEO
 ,8ª,,,,6º AV - GEO,6º AV - GEO
-,9ª,,,,6º BV - GEO,6º BV - GEO
+,9ª,,,,6º BV - GEO,GEO - Everton
 ,10ª,,,,8º AV - GEO,6º BV - GEO
 ,,,,,,
 Francisco,1ª,,,2º A Int - HIS,2º AM - HIS,8º BM - HIS
 ,2ª,,,1º BI - HBC,1º BI - HBC,1º CI - HBC
+
 ,3ª,,,8º AM - HIS,8º AM - HIS,2º AM - HIS
 ,4ª,,,2º BM - HIS,8º BM - HIS,2º A Int - HIS
 ,5ª,,,8º BM - HIS,2º BM - HIS,8º AM - HIS
 ,6ª,,,6º AV - HIS,6º AV - HIS,6º AV - HIS
 ,7ª,,,8º AV - HIS,6º BV - HIS,1º AI - P - HBC
 ,8ª,,,6º BV - HIS,1º CI - HBC,1º AI - P - HBC
-,9ª,,,6º BV - HIS,,8º AV - HIS
-,10ª,,,,,8º AV - HIS
+,9ª,,,6º BV - HIS,,HIS - Francisco
+,10ª,,,,,HIS - Francisco
 ,,,,,,
 Larissa,1ª,,,3º BM - FIL,3º BM - SOC,2º AM - SOC
+
 ,2ª,,,9º AM - GEO,3º AM - SOC,
 ,3ª,,,3º AM - FIL,2º BM - SOC,9º AM - GEO
 ,4ª,,,9º BM - GEO,9º BM - GEO,9º BM - GEO
@@ -248,11 +250,11 @@ Sheltom,1ª,2º BM - LP,8º BM - LP,,,
 ,3ª,2º A Int - LC,8º AM - LP,,8º BM - LP,1º CI - LC
 ,4ª,8º AM - LP,1º CI - LC,,8º AM - LP,8º AM - LP
 ,5ª,,2º BM - LP,,2º AM - LP,
-,6ª,,2º A Int - LC,,8 AV - LP,
-,7ª,,8º AV - LP,,8º AV - LP,9º AV - EF
-,8ª,,8º AV - LP,9º AV - ING,1º BI - LC,9º AV - HIS
-,9ª,,8º AV - ING,9º AV - HIS,8º AV - HIS,9º AV - LP
-,10ª,,8º AV - HIS,9º AV - LP,8º AV - GEO,9º AV - LP
+,6ª,,2º A Int - LC,,LP - Sheltom,
+,7ª,,8º AV - LP,,LP - Sheltom,LP - Sheltom
+,8ª,,8º AV - LP,9º AV - ING,ING - Cris,HIS - Francisco
+,9ª,,8º AV - ING,9º AV - HIS,ING - Cris,GEO - Everton
+,10ª,,8º AV - HIS,9º AV - LP,HIS - Francisco,
 ,,,,,,
 Teresa,1ª,9º BM - LP,1º CI - LP,,9º AM - LP,
 ,2ª,9º AM - LP,3º BM - PIT,,9º AM - LP,
