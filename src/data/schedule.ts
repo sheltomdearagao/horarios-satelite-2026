@@ -249,8 +249,10 @@ Sheltom,1ª,2º BM - LP,8º BM - LP,,,
 ,4ª,8º AM - LP,1º CI - LC,,8º AM - LP,8º AM - LP
 ,5ª,,2º BM - LP,,2º AM - LP,
 ,6ª,,2º A Int - LC,,8 AV - LP,
-,7ª,,8º AV - LP,,8º AV - LP,
-,8ª,,8º AV - LP,,1º BI - LC,
+,7ª,,8º AV - LP,,8º AV - LP,9º AV - EF
+,8ª,,8º AV - LP,9º AV - ING,1º BI - LC,9º AV - HIS
+,9ª,,8º AV - ING,9º AV - HIS,8º AV - HIS,9º AV - LP
+,10ª,,8º AV - HIS,9º AV - LP,8º AV - GEO,9º AV - LP
 ,,,,,,
 Teresa,1ª,9º BM - LP,1º CI - LP,,9º AM - LP,
 ,2ª,9º AM - LP,3º BM - PIT,,9º AM - LP,
