@@ -171,6 +171,7 @@ Everton,1ª,2º A Int - EAM,,8º BM - GEO,8º BM - GEO,8º AM - GEO
 ,8ª,,,,6º AV - GEO,6º AV - GEO
 ,9ª,,,,6º BV - GEO,GEO - Everton
 ,10ª,,,,8º AV - GEO,6º BV - GEO
+,4ª,,,,6º BV - GEO,
 ,,,,,,
 Francisco,1ª,,,2º A Int - HIS,2º AM - HIS,8º BM - HIS
 ,2ª,,,1º BI - HBC,1º BI - HBC,1º CI - HBC
