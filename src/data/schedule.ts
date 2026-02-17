@@ -23,9 +23,24 @@ const afternoonSlots = [
 const periodOrder = ["1ª", "2ª", "3ª", "4ª", "5ª", "6ª", "7ª", "8ª", "9ª", "10ª"];
 
 const classGroups = [
-  "8º AM", "8º BM", "9º AM", "9º BM", "2º AM", "2º BM", "3º AM", "3º BM",
-  "1º AI - P", "1º BI", "1º CI", "2º A Int",
-  "6º AV", "6º BV", "7º AV", "7º BV", "8º AV", "9º AV"
+  "6º AV",
+  "6º BV",
+  "7º AV",
+  "7º BV",
+  "8º AM",
+  "8º AV",
+  "8º BM",
+  "9º AM",
+  "9º AV",
+  "9º BM",
+  "1º AI - P",
+  "1º BI",
+  "1º CI",
+  "2º A Int",
+  "2º AM",
+  "2º BM",
+  "3º AM",
+  "3º BM"
 ];
 
 interface Lesson {

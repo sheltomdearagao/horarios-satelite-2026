@@ -397,6 +397,7 @@ const Index = () => {
                 getLessonKey={(l) => `${getSubjectCode(l.className)}|${l.classGroup}`}
                 showTeacher={false}
                 highlightColor="#10b981"
+                shiftVisibility="both"
               />
             )}
           </div>
@@ -449,6 +450,9 @@ const Index = () => {
                 getLessonKey={(l) => getSubjectCode(l.className)}
                 showTeacher={true}
                 highlightColor="#f59e0b"
+                shiftVisibility={
+                  selectedClass.includes("AI") ? "both" : selectedClass.includes("AV") || selectedClass.includes("BV") ? "afternoon-only" : "morning-only"
+                }
               />
             )}
           </div>
