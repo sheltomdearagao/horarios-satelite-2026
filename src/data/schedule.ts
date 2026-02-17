@@ -146,7 +146,7 @@ Ek,1ª,,,,3º AM - HIS,3º AM - HIS
 ,5ª,,,9º AM - HIS,1º CI - HIS,1º CI - HIS
 ,6ª,,,9º BM - HIS,1º BI - HIS,9º AV - HIS
 ,7ª,,,1º BI - HIS,1º AI - P - HIS,9º AV - HIS
-,8ª,,,7º AV - HIS,9º AV - HIS,
+,8ª,,,7º AV - HIS,9º AV - HIS,9º AV - HIS
 ,9ª,,,7º AV - HIS,7º AV - HIS,7º BV - HIS
 ,10ª,,,,7º BV - HIS,7º BV - HIS
 ,,,,,,
@@ -172,6 +172,7 @@ Everton,1ª,2º A Int - EAM,,8º BM - GEO,8º BM - GEO,8º AM - GEO
 ,9ª,,,,6º BV - GEO,GEO - Everton
 ,10ª,,,,8º AV - GEO,6º BV - GEO
 ,4ª,,,,6º BV - GEO,
+,5ª,,,,6º BV - GEO,
 ,,,,,,
 Francisco,1ª,,,2º A Int - HIS,2º AM - HIS,8º BM - HIS
 ,2ª,,,1º BI - HBC,1º BI - HBC,1º CI - HBC
@@ -215,7 +216,7 @@ Marcelo,1ª,8º AM - EF,2º AM - EF,,9º BM - EF,
 ,6ª,1º CI - EF,7º AV - EF,,9º AV - EF,
 ,7ª,9º AV - EF,2º A Int - EF,,1º BI - EF,
 ,8ª,8º AV - EF,7º AV - EF,,,
-,9ª,,7º BV - EF,,,
+,9ª,,,9º AV - EF,EF - Marcelo,
 ,10ª,,7º BV - EF,8º AV - EF,,,
 ,,,,,,
 Naza,1ª,,2º BM - BIO,2º AM - BIO,,
@@ -258,7 +259,7 @@ Rubi,1ª,,9º AM - ART,,,9º AM - ART
 ,7ª,,9º AV - ART,,7º AV - ART,6º AV - ART
 ,8ª,,,,6º BV - ART,8º AV - ART
 ,9ª,,6º AV - ART,,8º AV - ART,9º AV - ART
-,10ª,,7º BV - ART,,,
+,10ª,,7º BV - ART,,9º AV - ART
 ,,,,,,
 Sheltom,1ª,2º BM - LP,8º BM - LP,,,
 ,2ª,2º AM - LP,1º BI - LC,,8º BM - LP,8º BM - LP
