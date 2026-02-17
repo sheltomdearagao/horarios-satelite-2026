@@ -40,7 +40,7 @@ const classGroups = [
   "2º AM",
   "2º BM",
   "3º AM",
-  "3º BM"
+  "3º BM",
 ];
 
 interface Lesson {
@@ -172,11 +172,9 @@ Everton,1ª,2º A Int - EAM,,8º BM - GEO,8º BM - GEO,8º AM - GEO
 ,9ª,,,,6º BV - GEO,GEO - Everton
 ,10ª,,,,8º AV - GEO,6º BV - GEO
 ,4ª,,,,6º BV - GEO,
-,4ª,,,,6º BV - GEO,
 ,,,,,,
 Francisco,1ª,,,2º A Int - HIS,2º AM - HIS,8º BM - HIS
 ,2ª,,,1º BI - HBC,1º BI - HBC,1º CI - HBC
-
 ,3ª,,,8º AM - HIS,8º AM - HIS,2º AM - HIS
 ,4ª,,,2º BM - HIS,8º BM - HIS,2º A Int - HIS
 ,5ª,,,8º BM - HIS,2º BM - HIS,8º AM - HIS
@@ -195,8 +193,8 @@ Larissa,1ª,,,3º BM - FIL,3º BM - SOC,2º AM - SOC
 ,6ª,,,2º A Int - SOC,1º AI - P - SOC,1º CI - SOC
 ,7ª,,,1º CI - SOC,2º A Int - SOC,1º BI - SOC
 ,8ª,,,1º BI - SOC,7º BV - IDC,9º AV - GEO
-,9ª,,,9º AV - GEO,,
-,10ª,,,9º AV - GEO,7º AV - IDC,
+,9ª,,,9º AV - GEO,,LP - Teresa
+,10ª,,,9º AV - GEO,7º AV - IDC,LP - Teresa
 ,,,,,,
 LC,1ª,8º BM - MAT,8º AM - MAT,8º AM - MAT,,9º BM - MAT
 ,2ª,,9º AM - MAT,8º AM - MAT,,8º AM - MAT
@@ -218,7 +216,7 @@ Marcelo,1ª,8º AM - EF,2º AM - EF,,9º BM - EF,
 ,7ª,9º AV - EF,2º A Int - EF,,1º BI - EF,
 ,8ª,8º AV - EF,7º AV - EF,,,
 ,9ª,,7º BV - EF,,,
-,10ª,7º BV - EF,8º AV - EF,,,
+,10ª,,7º BV - EF,8º AV - EF,,,
 ,,,,,,
 Naza,1ª,,2º BM - BIO,2º AM - BIO,,
 ,2ª,1º BI - EDM,2º A Int - BIO,1º CI - EDM,,
