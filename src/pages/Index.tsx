@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScheduleGrid } from "@/components/ScheduleGrid";
 import { classSchedules, classColorMap, teacherSchedules, days } from "@/data/schedule";
-import type { Lesson, DayName, TeacherSchedule, ClassSchedule } from "@/data/schedule";
+import type { Lesson, DayName } from "@/data/schedule";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CalendarDays, Clock, ChevronDown } from "lucide-react";
@@ -53,13 +53,21 @@ const findNextLesson = (lessons: Lesson[], currentDayIndex: number, currentMinut
 };
 
 const formatShortDateForButton = (d: Date) => {
-  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(d).toUpperCase();
+  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
+    .format(d)
+    .toUpperCase();
   const day = String(d.getDate()).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
   return `${weekday} - ${day}/${month}`;
 };
 
-const LessonRow = ({ lesson, highlightColor }: { lesson: Lesson; highlightColor: string }) => {
+const LessonRow = ({
+  lesson,
+  highlightColor,
+}: {
+  lesson: Lesson;
+  highlightColor: string;
+}) => {
   const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
@@ -126,30 +134,7 @@ const NextLessonCard = ({
   );
 };
 
-const EmptyDataState = () => {
-  return (
-    <main className="min-h-screen bg-slate-950 py-10 text-slate-100">
-      <div className="mx-auto max-w-3xl px-4">
-        <div className="rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-10 shadow-2xl">
-          <p className="text-[0.7rem] font-black uppercase tracking-[0.35em] text-emerald-300/70">Dados não carregados</p>
-          <h1 className="mt-3 text-2xl font-black text-white">Nenhuma aula foi encontrada nos arquivos.</h1>
-          <p className="mt-3 text-sm font-medium text-white/70">
-            Isso normalmente acontece quando o JSON está em formato “por dia/turma” e não no formato de lista de aulas
-            com <span className="font-semibold text-white">turma, professor, disciplina, dia e horário</span>.
-          </p>
-          <p className="mt-4 text-sm font-medium text-white/70">
-            Me mande um trecho (2–3 entradas) do seu JSON e eu ajusto o parser para o formato correto.
-          </p>
-        </div>
-      </div>
-    </main>
-  );
-};
-
 const Index = () => {
-  const hasData = teacherSchedules.length > 0 && classSchedules.length > 0;
-  if (!hasData) return <EmptyDataState />;
-
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [activeKeyTeacher, setActiveKeyTeacher] = useState<string | null>(null);
@@ -157,14 +142,8 @@ const Index = () => {
   const [showTeacherSection, setShowTeacherSection] = useState(false);
   const [showClassSection, setShowClassSection] = useState(false);
 
-  const teacherMap = useMemo<Map<string, TeacherSchedule>>(
-    () => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])),
-    [],
-  );
-  const classMap = useMemo<Map<string, ClassSchedule>>(
-    () => new Map(classSchedules.map((classItem) => [classItem.name, classItem])),
-    [],
-  );
+  const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
+  const classMap = useMemo(() => new Map(classSchedules.map((classItem) => [classItem.name, classItem])), []);
 
   const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
@@ -190,11 +169,11 @@ const Index = () => {
   const minutesNow = now.getHours() * 60 + now.getMinutes();
 
   const [todayMode, setTodayMode] = useState<"teacher" | "class">("teacher");
-  const [todayTeacher, setTodayTeacher] = useState(teacherSchedules[0]!.name);
-  const [todayClass, setTodayClass] = useState(classSchedules[0]!.name);
+  const [todayTeacher, setTodayTeacher] = useState(teacherSchedules[0]?.name ?? "");
+  const [todayClass, setTodayClass] = useState(classSchedules[0]?.name ?? "");
 
-  const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0]!;
-  const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0]!;
+  const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0];
+  const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0];
 
   const baseLessons = todayMode === "teacher" ? todayTeacherSchedule.lessons : todayClassSchedule.lessons;
   const nextLesson = useMemo(() => {
@@ -204,10 +183,12 @@ const Index = () => {
 
   const todayLessons = useMemo(() => {
     if (!todayName) return [];
-    const scheduleByDay = todayMode === "teacher" ? todayTeacherSchedule.scheduleByDay : todayClassSchedule.scheduleByDay;
+    const scheduleByDay =
+      todayMode === "teacher" ? todayTeacherSchedule?.scheduleByDay : todayClassSchedule?.scheduleByDay;
+    if (!scheduleByDay) return [];
     const dayBucket = scheduleByDay[todayName];
     return [...dayBucket.morning, ...dayBucket.afternoon];
-  }, [todayClassSchedule.scheduleByDay, todayMode, todayName, todayTeacherSchedule.scheduleByDay]);
+  }, [todayClassSchedule?.scheduleByDay, todayMode, todayName, todayTeacherSchedule?.scheduleByDay]);
 
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date>(now);
   const monthDate = new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1);
@@ -217,7 +198,11 @@ const Index = () => {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
         <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-0.5">
-            <img src="/icon-512-transparent.png" alt="Logo C.E. Satélite" className="h-full w-full object-contain" />
+            <img
+              src="/icon-512-transparent.png"
+              alt="Logo C.E. Satélite"
+              className="h-full w-full object-contain"
+            />
           </div>
           <div className="flex flex-col">
             <p className="text-2xl font-extrabold leading-tight text-white">Horários 2026</p>
@@ -247,18 +232,16 @@ const Index = () => {
                 <p className="text-sm text-white/70">O dia de hoje permanece em destaque, mesmo que outro seja selecioando.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
-                <CalendarPreview
-                  monthDate={monthDate}
-                  selectedDate={selectedCalendarDate}
-                  onSelectDate={(d) => setSelectedCalendarDate(d)}
-                />
+                <CalendarPreview monthDate={monthDate} selectedDate={selectedCalendarDate} onSelectDate={(d) => setSelectedCalendarDate(d)} />
               </div>
             </DialogContent>
           </Dialog>
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="h-12 w-full justify-between rounded-2xl border border-white/10 bg-emerald-500/15 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1">
+              <Button
+                className="h-12 w-full justify-between rounded-2xl border border-white/10 bg-emerald-500/15 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1"
+              >
                 <span className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-emerald-300" />
                   <span className="text-sm font-black uppercase tracking-[0.22em]">Aulas de hoje</span>
@@ -342,12 +325,16 @@ const Index = () => {
                     {isWeekend(weekdayIndex) || !todayName ? (
                       <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
                         <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">{days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                          {days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}
+                        </p>
                       </div>
                     ) : todayLessons.length === 0 ? (
                       <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
                         <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">Nenhum horário cadastrado para {todayName}.</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                          Nenhum horário cadastrado para {todayName}.
+                        </p>
                       </div>
                     ) : (
                       todayLessons.map((lesson) => (
@@ -410,7 +397,6 @@ const Index = () => {
                 getLessonKey={(l) => `${getSubjectCode(l.className)}|${l.classGroup}`}
                 showTeacher={false}
                 highlightColor="#10b981"
-                shiftVisibility="both"
               />
             )}
           </div>
@@ -463,13 +449,6 @@ const Index = () => {
                 getLessonKey={(l) => getSubjectCode(l.className)}
                 showTeacher={true}
                 highlightColor="#f59e0b"
-                shiftVisibility={
-                  selectedClass.includes("AI")
-                    ? "both"
-                    : selectedClass.includes("AV") || selectedClass.includes("BV")
-                      ? "afternoon-only"
-                      : "morning-only"
-                }
               />
             )}
           </div>
