@@ -142,70 +142,18 @@ const Index = () => {
   const [showTeacherSection, setShowTeacherSection] = useState(false);
   const [showClassSection, setShowClassSection] = useState(false);
 
-  // Normalize a class name (remove NBSP, normalize º, trim)
-  const normalizeClassName = (name: string) =>
-    name
-      .replace(/\u00A0/g, " ")
-      .replace(/º/g, "º")
-      .replace(/\s+/g, " ")
-      .trim();
-
-  // ORDER classes: 6ºs, 7ºs, 8ºs, 9ºs, 1ºs, 2ºs, 3ºs — ensure ALL classes appear (merge present groups)
+  // ORDER classes: 6ºs, 7ºs, 8ºs, 9ºs, 1ºs, 2ºs, 3ºs
   const orderedClassSchedules = useMemo(() => {
     const gradeOrder = ["6", "7", "8", "9", "1", "2", "3"];
-
-    // Collect all class names present
-    const allNames = classSchedules.map((c) => c.name);
-    const normalizedMap = new Map<string, string>(); // normalized -> original
-    allNames.forEach((n) => normalizedMap.set(normalizeClassName(n), n));
-
-    // Partition by grade key
-    const buckets: Record<string, string[]> = {};
-    allNames.forEach((orig) => {
-      const n = normalizeClassName(orig);
-      const m = n.match(/(\d{1,2})/); // find first number
-      const grade = m ? m[1] : "zz"; // non-matching go to end
-      if (!buckets[grade]) buckets[grade] = [];
-      buckets[grade].push(orig);
+    return [...classSchedules].sort((a, b) => {
+      const matchA = a.name.match(/(\d+)º/);
+      const matchB = b.name.match(/(\d+)º/);
+      const ga = matchA ? gradeOrder.indexOf(matchA[1]) : gradeOrder.length;
+      const gb = matchB ? gradeOrder.indexOf(matchB[1]) : gradeOrder.length;
+      if (ga !== gb) return ga - gb;
+      // same grade — keep a stable order by name
+      return a.name.localeCompare(b.name, "pt-BR");
     });
-
-    // Build ordered list by gradeOrder, then remaining numeric grades ascending, then others
-    const ordered: string[] = [];
-    gradeOrder.forEach((g) => {
-      const list = buckets[g];
-      if (list && list.length) {
-        list.sort((a, b) => a.localeCompare(b, "pt-BR"));
-        ordered.push(...list);
-        delete buckets[g];
-      }
-    });
-
-    // remaining numeric grades (unlikely) - sort ascending
-    const remainingGrades = Object.keys(buckets).filter((k) => /^\d+$/.test(k)).sort((a, b) => Number(a) - Number(b));
-    remainingGrades.forEach((g) => {
-      const list = buckets[g];
-      list.sort((a, b) => a.localeCompare(b, "pt-BR"));
-      ordered.push(...list);
-      delete buckets[g];
-    });
-
-    // any others
-    Object.keys(buckets).forEach((g) => {
-      const list = buckets[g];
-      list.sort((a, b) => a.localeCompare(b, "pt-BR"));
-      ordered.push(...list);
-    });
-
-    // final: map to classSchedules entries (preserving full objects)
-    const mapByName = new Map(classSchedules.map((c) => [c.name, c]));
-    const result = ordered.map((name) => mapByName.get(name)).filter(Boolean) as typeof classSchedules;
-    // ensure no duplicates and include any classSchedules not yet in result
-    const resultNames = new Set(result.map((r) => r.name));
-    classSchedules.forEach((c) => {
-      if (!resultNames.has(c.name)) result.push(c);
-    });
-
-    return result;
   }, [classSchedules]);
 
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
@@ -276,25 +224,253 @@ const Index = () => {
         </header>
 
         <section className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-          {/* ... keep existing UI unchanged ... */}
-          {/* Use orderedClassSchedules for selects to show all classes in desired order */}
-          <div className="w-full sm:max-w-sm">
-            <Select value={selectedClass} onValueChange={(value) => { setSelectedClass(value); setShowClassSection(true); }}>
-              <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
-                <SelectValue placeholder="Escolha uma turma" />
-              </SelectTrigger>
-              <SelectContent className="border-white/10 bg-slate-900 text-white">
-                {orderedClassSchedules.map((classItem) => (
-                  <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
-                    {classItem.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="secondary"
+                className="h-12 w-full justify-between rounded-2xl border border-white/10 bg-white/5 px-5 text-white shadow-[0_20px_50px_rgba(15,23,42,0.45)] backdrop-blur-sm hover:bg-white/10 sm:w-auto sm:flex-1"
+              >
+                <span className="flex items-center gap-3">
+                  <CalendarDays className="h-5 w-5 text-emerald-300" />
+                  <span className="text-sm font-black uppercase tracking-[0.22em]">Calendário</span>
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
+                  {new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(now)}
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[92vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-xl">
+              <DialogHeader className="px-6 pt-6">
+                <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Calendário</DialogTitle>
+                <p className="text-sm text-white/70">Visual rápido do mês atual, no mesmo estilo da home.</p>
+              </DialogHeader>
+              <div className="px-6 pb-6">
+                <CalendarPreview monthDate={monthDate} selectedDate={selectedCalendarDate} onSelectDate={(d) => setSelectedCalendarDate(d)} />
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                className="h-12 w-full justify-between rounded-2xl border border-emerald-500/10 bg-emerald-500/10 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1"
+              >
+                <span className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-emerald-300" />
+                  <span className="text-sm font-black uppercase tracking-[0.22em]">Aulas de hoje</span>
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">{formatShortDateForButton(now)}</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[92vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-2xl">
+              <DialogHeader className="px-6 pt-6">
+                <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Aulas de hoje</DialogTitle>
+                <p className="text-sm text-white/70">O sistema usa automaticamente o dia/horário do seu dispositivo.</p>
+              </DialogHeader>
+              <div className="px-6 pb-6">
+                <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Button
+                    type="button"
+                    onClick={() => setTodayMode("teacher")}
+                    className={`h-12 rounded-2xl border px-5 text-sm font-black uppercase tracking-[0.22em] ${
+                      todayMode === "teacher"
+                        ? "border-emerald-400/50 bg-emerald-500/20 text-white"
+                        : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
+                    }`}
+                  >
+                    Por professor
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setTodayMode("class")}
+                    className={`h-12 rounded-2xl border px-5 text-sm font-black uppercase tracking-[0.22em] ${
+                      todayMode === "class"
+                        ? "border-amber-400/50 bg-amber-500/20 text-white"
+                        : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
+                    }`}
+                  >
+                    Por turma
+                  </Button>
+                </div>
+
+                <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-white/50">Filtro</p>
+                      <p className="mt-1 text-lg font-black text-white">{todayMode === "teacher" ? todayTeacher : todayClass}</p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/55">{todayLabelFull}</p>
+                    </div>
+
+                    <div className="w-full sm:max-w-sm">
+                      {todayMode === "teacher" ? (
+                        <Select value={todayTeacher} onValueChange={setTodayTeacher}>
+                          <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                            <SelectValue placeholder="Escolha um professor" />
+                          </SelectTrigger>
+                          <SelectContent className="border-white/10 bg-slate-900 text-white">
+                            {teacherSchedules.map((teacher) => (
+                              <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
+                                {teacher.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Select value={todayClass} onValueChange={setTodayClass}>
+                          <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                            <SelectValue placeholder="Escolha uma turma" />
+                          </SelectTrigger>
+                          <SelectContent className="border-white/10 bg-slate-900 text-white">
+                            {orderedClassSchedules.map((classItem) => (
+                              <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
+                                {classItem.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-5 space-y-4">
+                    <NextLessonCard lesson={nextLesson} mode={todayMode} highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"} />
+
+                    {isWeekend(weekdayIndex) || !todayName ? (
+                      <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
+                        <p className="text-base font-black text-white">Não há aulas hoje.</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                          {days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}
+                        </p>
+                      </div>
+                    ) : todayLessons.length === 0 ? (
+                      <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
+                        <p className="text-base font-black text-white">Não há aulas hoje.</p>
+                        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                          Nenhum horário cadastrado para {todayName}.
+                        </p>
+                      </div>
+                    ) : (
+                      todayLessons.map((lesson) => (
+                        <LessonRow key={lesson.id} lesson={lesson} highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"} />
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </section>
 
-        {/* rest of page unchanged (ScheduleGrid usage remains) */}
+        <section className="space-y-10">
+          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-8 shadow-2xl">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-1">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Docente</p>
+                <h2 className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</h2>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="w-full max-w-sm">
+                  <Select
+                    value={selectedTeacher}
+                    onValueChange={(value) => {
+                      setSelectedTeacher(value);
+                      setShowTeacherSection(true);
+                    }}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                      <SelectValue placeholder="Escolha um professor" />
+                    </SelectTrigger>
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                      {teacherSchedules.map((teacher) => (
+                        <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
+                          {teacher.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowTeacherSection((prev) => !prev)}
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
+                >
+                  {showTeacherSection ? "Recolher" : "Expandir"}
+                </Button>
+              </div>
+            </div>
+
+            {showTeacherSection && currentTeacher && (
+              <ScheduleGrid
+                scheduleByDay={currentTeacher.scheduleByDay}
+                classColorMap={classColorMap}
+                onLessonClick={handleTeacherLessonClick}
+                activeKey={activeKeyTeacher}
+                getLessonKey={(l) => `${getSubjectCode(l.className)}|${l.classGroup}`}
+                showTeacher={false}
+                highlightColor="#10b981"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-6 py-8 shadow-2xl">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-1">
+                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Turma</p>
+                <h2 className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</h2>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="w-full max-w-sm">
+                  <Select
+                    value={selectedClass}
+                    onValueChange={(value) => {
+                      setSelectedClass(value);
+                      setShowClassSection(true);
+                    }}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                      <SelectValue placeholder="Escolha uma turma" />
+                    </SelectTrigger>
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                      {orderedClassSchedules.map((classItem) => (
+                        <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
+                          {classItem.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowClassSection((prev) => !prev)}
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
+                >
+                  {showClassSection ? "Recolher" : "Expandir"}
+                </Button>
+              </div>
+            </div>
+
+            {showClassSection && currentClassSchedule && (
+              <ScheduleGrid
+                scheduleByDay={currentClassSchedule.scheduleByDay}
+                classColorMap={classColorMap}
+                onLessonClick={handleClassLessonClick}
+                activeKey={activeKeyGroup}
+                getLessonKey={(l) => getSubjectCode(l.className)}
+                showTeacher={true}
+                highlightColor="#f59e0b"
+                visibleShift={
+                  /\b(AM|BM)\b/.test(currentClassSchedule.name)
+                    ? "morning"
+                    : /\b(AV|BV)\b/.test(currentClassSchedule.name)
+                      ? "afternoon"
+                      : "both"
+                }
+              />
+            )}
+          </div>
+        </section>
       </div>
     </main>
   );
