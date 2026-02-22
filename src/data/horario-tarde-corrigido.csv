@@ -21,6 +21,8 @@ QUI;3;GEO - Everton;LP - Roberta;ART - Rubi;ING - Cris;LP - Sheltom;HIS - Franci
 ;5;ING - Cris;HIS - Francisco;LP - Roberta;HIS - Ek;GEO - Everton;LP - Sheltom;LP - Teresa;GEO - Larissa;;;;
 ;1;PDV - Rosa;ING - Cris;LP - Roberta;MAT - Edneia;CID - Aldo;GEO - Everton;PDV - Duda;GEO - Larissa;HBC - Francisco;HIS - Ek;RCSS - PROTEC;ART - Rubi
 ;2;EF - Aldo;GEO - Everton;LP - Roberta;MAT - Edneia;ART - Rubi;HIS - Francisco;HIS - Ek;ING - Cris;SOC - Larissa;GEO - Duda;FAC - PROTEC;FIL - Rosa
-SEX;3;LP - Roberta;GEO - Everton;IDC - Larissa;ING - Cris;MAT - Edneia;HIS - Francisco;HIS - Ek;ART - Rubi;;;;GEO - Duda
+SEX;1;PDV - Rosa;ING - Cris;LP - Roberta;MAT - Edneia;CID - Aldo;GEO - Everton;PDV - Duda;GEO - Larissa;HBC - Francisco;HIS - Ek;RCSS - PROTEC;ART - Rubi
+;2;EF - Aldo;GEO - Everton;LP - Roberta;MAT - Edneia;ART - Rubi;HIS - Francisco;HIS - Ek;ING - Cris;SOC - Larissa;GEO - Duda;FAC - PROTEC;FIL - Rosa
+;3;LP - Roberta;GEO - Everton;IDC - Larissa;ING - Cris;MAT - Edneia;HIS - Francisco;HIS - Ek;ART - Rubi;;;;GEO - Duda
 ;4;GEO - Everton;HIS - Francisco;MAT - Edneia;LP - Roberta;PDV - Duda;ING - Cris;ART - Rubi;HIS - Ek;;;;
 ;5;MAT - Edneia;ART - Aldo;HIS - Ek;LP - Roberta;GEO - Everton;ING - Cris;ART - Rubi;PDV - Duda;;;;
