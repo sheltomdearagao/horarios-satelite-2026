@@ -196,9 +196,6 @@ const groupByDay = (lessons: Lesson[]): Record<DayName, { morning: Lesson[]; aft
   return grouped;
 };
 
-const matrixA = await fetch(matrixAUrl).then((r) => r.text());
-const matrixB = await fetch(matrixBUrl).then((r) => r.text());
-
 const parsedA = parseMatrixCsv(matrixARaw as unknown as string);
 const parsedB = parseMatrixCsv(matrixBRaw as unknown as string);
 
