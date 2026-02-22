@@ -1,31 +1,29 @@
-﻿Dia;Horário;8º AM;9º AM;1º AI;1º BI;1º TEC;2º AM;2º BM;2º A Int;3º AM;3º BM;;;;;;;;;;;;;;;;;
-;1;CID - Aldo;EF - Marcelo;MAT - Edneia;LP - Teresa;BIO - Eugênio;BIO - Nazareth;ING - Cris;MAT - LC;FIS - Valéria;IEPON - Duda;;;;;;;;;;;;;;;;;
-;2;CIE - Eugênio;CTET - LC;EF - Marcelo;LP - Teresa;MAT - Edneia;BIO - Nazareth;LP - Sheltom;ING - Cris;FIS - Valéria;CPEP - Aldo;;;;;;;;;;;;;;;;;
-SEG;3;CIE - Eugênio;MAT - LC;QUI - Valéria;ING - Cris;LP - Teresa;LP - Sheltom;MAT - Edneia;EF - Marcelo;IEPON - Duda;CPEP - Aldo;;;;;;;;;;;;;;;;;
-;4;LP - Sheltom;MAT - LC;EDM - Nazareth;MAT - Edneia;LP - Teresa;ING - Cris;EF - Marcelo;BIO - Eugênio;CPEP - Aldo;FIS - Valéria;;;;;;;;;;;;;;;;;
-;5;LP - Sheltom;LP - Teresa;MAT - Edneia;BIO - Eugênio;EDM - Nazareth;EF - Marcelo;GEO - Duda;MAT - LC;CPEP - Aldo;FIS - Valéria;;;;;;;;;;;;;;;;;
-;1;CIE - Eugênio;MAT - LC;ETNO - Claudio;LP - Teresa;ART - Rubi;EF - Marcelo;BIO - Nazareth;QUI - Rosa;QUI - Valéria;LP - Roberta;;;;;;;;;;;;;;;;;
-;2;MAT - LC;CIE - Eugênio;ART - Rubi;EF - Marcelo;MAT - Edneia;FIS - Valéria;BIO - Nazareth;QUI - Rosa;LP - Roberta;PIT - Teresa;;;;;;;;;;;;;;;;;
-TER;3;MAT - LC;LP - Teresa;BIO - Eugênio;MAT - Edneia;FIS - Valéria;QUI - Rosa;LP - Sheltom;EF - Marcelo;MAT - Claudio;BIO - Nazareth;;;;;;;;;;;;;;;;;
-;4;EF - Marcelo;ART - Rubi;LC - Sheltom;MAT - Edneia;LP - Teresa;QUI - Rosa;FIS - Valéria;LP - Roberta;MAES - Nazareth;OMONES - Claudio;;;;;;;;;;;;;;;;;
-;5;LP - Sheltom;ART - Rubi;LP - Teresa;ETNO - Claudio;BIO - Eugênio;ETNO - Edneia;EDSC - Rosa;LP - Roberta;MAES - Nazareth;QUI - Valéria;;;;;;;;;;;;;;;;;
-;1;MAT - LC;GEO - Larissa;FIL - Rosa;;GEO - Duda;FIS - Valéria;HIS - Francisco;BIO - Eugênio;MAT - Claudio;GEO - Everton;;;;;;;;;;;;;;;;;
-;2;MAT - LC;CIE - Eugênio;FIL - Rosa;HBC - Francisco;SOC - Larissa;MAT - Edneia;GEO - Duda;ETNO - Claudio;GEO - Everton;QUI - Valéria;;;;;;;;;;;;;;;;;
-QUA;3;GEO - Everton;CIE - Eugênio;GEO - Duda;FIL - Rosa;QUI - Valéria;MAT - Edneia;SOC - Larissa;ETNO - Claudio;HIS - Ek;MAES - Nazareth;;;;;;;;;;;;;;;;;
-;4;PDV - Duda;MAT - LC;ETNO - Claudio;FIL - Rosa;QUI - Valéria;HIS - Francisco;EAM - Everton;SOC - Larissa;HIS - Ek;MAES - Nazareth;;;;;;;;;;;;;;;;;
-;5;HIS - Francisco;HIS - Ek;FIS - Valéria;GEO - Duda;FIL - Rosa;EAM - Everton;MAT - Edneia;SOC - Larissa;BIO - Nazareth;OMONES - Claudio;;;;;;;;;;;;;;;;;
-;1;HIS - Francisco;ING - Cris;ART - Rubi;HIS - Ek;LP - Teresa;LC - Roberta;EF - Marcelo;;PDV - Everton;SOC - Larissa;;;;;;;;;;;;;;;;;
-;2;EF - Marcelo;ING - Cris;HBC - Francisco;LC - Sheltom;HIS - Ek;SOC - Larissa;ART - Rubi;SPG - Everton;PIT - Teresa;LP - Roberta;;;;;;;;;;;;;;;;;
-QUI;3;ING - Cris;EF - Marcelo;LP - Teresa;LC - Sheltom;ART - Rubi;FIL - Larissa;HIS - Francisco;EAM - Everton;LP - Roberta;HIS - Ek;;;;;;;;;;;;;;;;;
-;4;GEO - Everton;LP - Teresa;EF - Marcelo;HBC - Francisco;SO - PROTEC;LP - Sheltom;LC - Roberta;ART - Rubi;SOC - Larissa;HIS - Ek;;;;;;;;;;;;;;;;;
-;5;LP - Sheltom;LP - Teresa;ING - Cris;EF - Marcelo;MD - PROTEC;ART - Rubi;HBC - Ek;HIS - Francisco;FIL - Larissa;PDV - Everton;;;;;;;;;;;;;;;;;
-;1;HIS - Francisco;HIS - Ek;;ETNO - Claudio;;GEO - Duda;QUI - Rosa;FIS - Valéria;GEO - Everton;FIL - Larissa;;;;;;;;;;;;;;;;;
-;2;GEO - Everton;HIS - Ek;MAT - Edneia;ART - Rubi;ING - Cris;GEO - Duda;QUI - Rosa;LP - Roberta;QUI - Valéria;MAT - Claudio;;;;;;;;;;;;;;;;;
+﻿Dia;Horário;8º AM;9º AM;1º AI;1º BI;1º TEC;2º AM;2º BM;2º A Int;3º AM;3º BM
+SEG;1;CID - Aldo;EF - Marcelo;MAT - Edneia;LP - Teresa;BIO - Eugênio;BIO - Nazareth;ING - Cris;MAT - LC;FIS - Valéria;IEPON - Duda
+;2;CIE - Eugênio;CTET - LC;EF - Marcelo;LP - Teresa;MAT - Edneia;BIO - Nazareth;LP - Sheltom;ING - Cris;FIS - Valéria;CPEP - Aldo
+;3;CIE - Eugênio;MAT - LC;QUI - Valéria;ING - Cris;LP - Teresa;LP - Sheltom;MAT - Edneia;EF - Marcelo;IEPON - Duda;CPEP - Aldo
+;4;LP - Sheltom;MAT - LC;EDM - Nazareth;MAT - Edneia;LP - Teresa;ING - Cris;EF - Marcelo;BIO - Eugênio;CPEP - Aldo;FIS - Valéria
+;5;LP - Sheltom;LP - Teresa;MAT - Edneia;BIO - Eugênio;EDM - Nazareth;EF - Marcelo;GEO - Duda;MAT - LC;CPEP - Aldo;FIS - Valéria
+TER;1;CIE - Eugênio;MAT - LC;ETNO - Claudio;LP - Teresa;ART - Rubi;EF - Marcelo;BIO - Nazareth;QUI - Rosa;QUI - Valéria;LP - Roberta
+;2;MAT - LC;CIE - Eugênio;ART - Rubi;EF - Marcelo;MAT - Edneia;FIS - Valéria;BIO - Nazareth;QUI - Rosa;LP - Roberta;PIT - Teresa
+;3;MAT - LC;LP - Teresa;BIO - Eugênio;MAT - Edneia;FIS - Valéria;QUI - Rosa;LP - Sheltom;EF - Marcelo;MAT - Claudio;BIO - Nazareth
+;4;EF - Marcelo;ART - Rubi;LC - Sheltom;MAT - Edneia;LP - Teresa;QUI - Rosa;FIS - Valéria;LP - Roberta;MAES - Nazareth;OMONES - Claudio
+;5;LP - Sheltom;ART - Rubi;LP - Teresa;ETNO - Claudio;BIO - Eugênio;ETNO - Edneia;EDSC - Rosa;LP - Roberta;MAES - Nazareth;QUI - Valéria
+QUA;1;MAT - LC;GEO - Larissa;FIL - Rosa;;GEO - Duda;FIS - Valéria;HIS - Francisco;BIO - Eugênio;MAT - Claudio;GEO - Everton
+;2;MAT - LC;CIE - Eugênio;FIL - Rosa;HBC - Francisco;SOC - Larissa;MAT - Edneia;GEO - Duda;ETNO - Claudio;GEO - Everton;QUI - Valéria
+;3;GEO - Everton;CIE - Eugênio;GEO - Duda;FIL - Rosa;QUI - Valéria;MAT - Edneia;SOC - Larissa;ETNO - Claudio;HIS - Ek;MAES - Nazareth
+;4;PDV - Duda;MAT - LC;ETNO - Claudio;FIL - Rosa;QUI - Valéria;HIS - Francisco;EAM - Everton;SOC - Larissa;HIS - Ek;MAES - Nazareth
+;5;HIS - Francisco;HIS - Ek;FIS - Valéria;GEO - Duda;FIL - Rosa;EAM - Everton;MAT - Edneia;SOC - Larissa;BIO - Nazareth;OMONES - Claudio
+QUI;1;HIS - Francisco;ING - Cris;ART - Rubi;HIS - Ek;LP - Teresa;LC - Roberta;EF - Marcelo;;PDV - Everton;SOC - Larissa
+;2;EF - Marcelo;ING - Cris;HBC - Francisco;LC - Sheltom;HIS - Ek;SOC - Larissa;ART - Rubi;SPG - Everton;PIT - Teresa;LP - Roberta
+;3;ING - Cris;EF - Marcelo;LP - Teresa;LC - Sheltom;ART - Rubi;FIL - Larissa;HIS - Francisco;EAM - Everton;LP - Roberta;HIS - Ek
+;4;GEO - Everton;LP - Teresa;EF - Marcelo;HBC - Francisco;SO - PROTEC;LP - Sheltom;LC - Roberta;ART - Rubi;SOC - Larissa;HIS - Ek
+;5;LP - Sheltom;LP - Teresa;ING - Cris;EF - Marcelo;MD - PROTEC;ART - Rubi;HBC - Ek;HIS - Francisco;FIL - Larissa;PDV - Everton
 SEX;1;HIS - Francisco;HIS - Ek;;ETNO - Claudio;;GEO - Duda;QUI - Rosa;FIS - Valéria;GEO - Everton;FIL - Larissa
 ;2;GEO - Everton;HIS - Ek;MAT - Edneia;ART - Rubi;ING - Cris;GEO - Duda;QUI - Rosa;LP - Roberta;QUI - Valéria;MAT - Claudio
 ;3;ING - Cris;GEO - Larissa;QUI - Valéria;ART - Rubi;PTS - Rosa;HIS - Francisco;ETNO - Edneia;LP - Roberta;IEPON - Duda;MAT - Claudio
 ;4;ART - Rubi;GEO - Larissa;HIS - Ek;ING - Cris;HBC - Francisco;EDSC - Rosa;FIS - Valéria;GEO - Duda;OMONES - Claudio;GEO - Everton
-;5;ART - Rubi;PDV - Rosa;ING - Cris;FIS - Valéria;HBC - Francisco;HBC - Ek;FIL - Larissa;EAM - Everton;OMONES - Claudio;IEPON - Duda;;;;;;;;;;;;;;;;;
+;5;ART - Rubi;PDV - Rosa;ING - Cris;FIS - Valéria;HBC - Francisco;HBC - Ek;FIL - Larissa;EAM - Everton;OMONES - Claudio;IEPON - Duda
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -997,5 +995,6 @@ SEX;1;HIS - Francisco;HIS - Ek;;ETNO - Claudio;;GEO - Duda;QUI - Rosa;FIS - Val�
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
