@@ -449,6 +449,13 @@ const Index = () => {
                 getLessonKey={(l) => getSubjectCode(l.className)}
                 showTeacher={true}
                 highlightColor="#f59e0b"
+                visibleShift={
+                  /\b(AM|BM)\b/.test(currentClassSchedule.name)
+                    ? "morning"
+                    : /\b(AV|BV)\b/.test(currentClassSchedule.name)
+                      ? "afternoon"
+                      : "both"
+                }
               />
             )}
           </div>

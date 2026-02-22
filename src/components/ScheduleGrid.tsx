@@ -11,6 +11,7 @@ interface ScheduleGridProps {
   showTeacher?: boolean;
   highlightColor?: string;
   getLessonKey: (lesson: Lesson) => string;
+  visibleShift?: "morning" | "afternoon" | "both";
 }
 
 const hexToRgba = (hex: string, alpha: number) => {
@@ -44,9 +45,7 @@ const LessonCard = ({
     className={cn(
       "relative flex w-full items-start gap-3 rounded-2xl border bg-white px-3 py-2 md:px-4 md:py-3 text-left transition-all duration-300",
       "hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
-      isActive
-        ? "scale-[1.02] z-10 border-2"
-        : "border-slate-100 shadow-sm"
+      isActive ? "scale-[1.02] z-10 border-2" : "border-slate-100 shadow-sm"
     )}
     style={{
       borderColor: isActive ? highlightColor : undefined,
@@ -68,9 +67,7 @@ const LessonCard = ({
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-sm md:text-base font-bold leading-tight text-slate-900 truncate">
-        {lesson.className}
-      </p>
+      <p className="text-sm md:text-base font-bold leading-tight text-slate-900 truncate">{lesson.className}</p>
       <div className="flex items-center justify-between text-[0.7rem] text-slate-500">
         <span className="font-medium uppercase tracking-[0.25em]">{lesson.time}</span>
       </div>
@@ -97,7 +94,7 @@ const EmptySlotCard = ({
         <span>{slotInfo.label}</span>
         <span className="text-[0.55rem]">{shift === "morning" ? "MANHÃ" : "TARDE"}</span>
       </div>
-      <p className="text-sm md:text-base font-bold leading-tight text-slate-300">-</p>
+      <p className="text-sm md:text-base font-bold leading-tight text-slate-300">Sem aula</p>
       <div className="text-[0.7rem] text-slate-300">
         <span className="font-medium uppercase tracking-[0.25em]">{slotInfo.time}</span>
       </div>
@@ -113,6 +110,7 @@ export const ScheduleGrid = ({
   showTeacher = false,
   highlightColor = "#34d399",
   getLessonKey,
+  visibleShift = "both",
 }: ScheduleGridProps) => (
   <div className="-mx-4 overflow-x-auto pb-4 scrollbar-hide">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
@@ -130,63 +128,65 @@ export const ScheduleGrid = ({
           >
             <header className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
               <h3 className="text-base md:text-lg font-bold uppercase tracking-widest text-white">{day}</h3>
-              <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">
-                Grade Completa
-              </span>
+              <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">Grade Completa</span>
             </header>
 
             <div className="flex flex-col gap-8">
               {/* Morning Shift */}
-              <div className="space-y-3">
-                <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
-                <div className="flex flex-col gap-3">
-                  {morningSlots.map((slotInfo, index) => {
-                    const lesson = dayLessons.morning.find((l) => l.slot === index);
-                    if (lesson) {
-                      const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
-                      const isActive = getLessonKey(lesson) === activeKey;
-                      return (
-                        <LessonCard
-                          key={lesson.id}
-                          lesson={lesson}
-                          accent={accent}
-                          showTeacher={showTeacher}
-                          highlightColor={highlightColor}
-                          isActive={isActive}
-                          onClick={() => onLessonClick(lesson)}
-                        />
-                      );
-                    }
-                    return <EmptySlotCard key={`empty-m-${day}-${index}`} slotInfo={slotInfo} shift="morning" />;
-                  })}
+              {visibleShift !== "afternoon" && (
+                <div className="space-y-3">
+                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
+                  <div className="flex flex-col gap-3">
+                    {morningSlots.map((slotInfo, index) => {
+                      const lesson = dayLessons.morning.find((l) => l.slot === index);
+                      if (lesson) {
+                        const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
+                        const isActive = getLessonKey(lesson) === activeKey;
+                        return (
+                          <LessonCard
+                            key={lesson.id}
+                            lesson={lesson}
+                            accent={accent}
+                            showTeacher={showTeacher}
+                            highlightColor={highlightColor}
+                            isActive={isActive}
+                            onClick={() => onLessonClick(lesson)}
+                          />
+                        );
+                      }
+                      return <EmptySlotCard key={`empty-m-${day}-${index}`} slotInfo={slotInfo} shift="morning" />;
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Afternoon Shift */}
-              <div className="space-y-3">
-                <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
-                <div className="flex flex-col gap-3">
-                  {afternoonSlots.map((slotInfo, index) => {
-                    const lesson = dayLessons.afternoon.find((l) => l.slot === index);
-                    if (lesson) {
-                      const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
-                      const isActive = getLessonKey(lesson) === activeKey;
-                      return (
-                        <LessonCard
-                          key={lesson.id}
-                          lesson={lesson}
-                          accent={accent}
-                          showTeacher={showTeacher}
-                          highlightColor={highlightColor}
-                          isActive={isActive}
-                          onClick={() => onLessonClick(lesson)}
-                        />
-                      );
-                    }
-                    return <EmptySlotCard key={`empty-a-${day}-${index}`} slotInfo={slotInfo} shift="afternoon" />;
-                  })}
+              {visibleShift !== "morning" && (
+                <div className="space-y-3">
+                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
+                  <div className="flex flex-col gap-3">
+                    {afternoonSlots.map((slotInfo, index) => {
+                      const lesson = dayLessons.afternoon.find((l) => l.slot === index);
+                      if (lesson) {
+                        const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
+                        const isActive = getLessonKey(lesson) === activeKey;
+                        return (
+                          <LessonCard
+                            key={lesson.id}
+                            lesson={lesson}
+                            accent={accent}
+                            showTeacher={showTeacher}
+                            highlightColor={highlightColor}
+                            isActive={isActive}
+                            onClick={() => onLessonClick(lesson)}
+                          />
+                        );
+                      }
+                      return <EmptySlotCard key={`empty-a-${day}-${index}`} slotInfo={slotInfo} shift="afternoon" />;
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </article>
         );
