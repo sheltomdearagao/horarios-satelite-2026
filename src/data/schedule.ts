@@ -1,5 +1,5 @@
-import matrixA from "/horario-manha-corrigido.csv?raw";
-import matrixB from "/horario-tarde-corrigido.csv?raw";
+import matrixARaw from "/horario-manha-corrigido.csv?url&raw";
+import matrixBRaw from "/horario-tarde-corrigido.csv?url&raw";
 
 const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"] as const;
 
@@ -199,8 +199,8 @@ const groupByDay = (lessons: Lesson[]): Record<DayName, { morning: Lesson[]; aft
 const matrixA = await fetch(matrixAUrl).then((r) => r.text());
 const matrixB = await fetch(matrixBUrl).then((r) => r.text());
 
-const parsedA = parseMatrixCsv(matrixA);
-const parsedB = parseMatrixCsv(matrixB);
+const parsedA = parseMatrixCsv(matrixARaw as unknown as string);
+const parsedB = parseMatrixCsv(matrixBRaw as unknown as string);
 
 const allLessons = [...parsedA.lessons, ...parsedB.lessons];
 
