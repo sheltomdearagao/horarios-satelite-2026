@@ -21,7 +21,8 @@ QUI;3;ING - Cris;EF - Marcelo;LP - Teresa;LC - Sheltom;ART - Rubi;FIL - Larissa;
 ;5;LP - Sheltom;LP - Teresa;ING - Cris;EF - Marcelo;MD - PROTEC;ART - Rubi;HBC - Ek;HIS - Francisco;FIL - Larissa;PDV - Everton;;;;;;;;;;;;;;;;;
 ;1;HIS - Francisco;HIS - Ek;;ETNO - Claudio;;GEO - Duda;QUI - Rosa;FIS - Valéria;GEO - Everton;FIL - Larissa;;;;;;;;;;;;;;;;;
 ;2;GEO - Everton;HIS - Ek;MAT - Edneia;ART - Rubi;ING - Cris;GEO - Duda;QUI - Rosa;LP - Roberta;QUI - Valéria;MAT - Claudio;;;;;;;;;;;;;;;;;
-SEX;3;ING - Cris;GEO - Larissa;QUI - Valéria;ART - Rubi;PTS - Rosa;HIS - Francisco;ETNO - Edneia;LP - Roberta;IEPON - Duda;MAT - Claudio;;;;;;;;;;;;;;;;;
+SEX;3;1;HIS - Francisco;HIS - Ek;;ETNO - Claudio;;GEO - Duda;QUI - Rosa;FIS - Valéria;GEO - Everton;FIL - Larissa
+;2;GEO - Everton;HIS - Ek;MAT - Edneia;ART - Rubi;ING - Cris;GEO - Duda;QUI - Rosa;LP - Roberta;LP - Roberta;QUI - Valéria;MAT - ClaudioING - Cris;GEO - Larissa;QUI - Valéria;ART - Rubi;PTS - Rosa;HIS - Francisco;ETNO - Edneia;LP - Roberta;IEPON - Duda;MAT - Claudio;;;;;;;;;;;;;;;;;
 ;4;ART - Rubi;GEO - Larissa;HIS - Ek;ING - Cris;HBC - Francisco;EDSC - Rosa;FIS - Valéria;GEO - Duda;OMONES - Claudio;GEO - Everton;;;;;;;;;;;;;;;;;
 ;5;ART - Rubi;PDV - Rosa;ING - Cris;FIS - Valéria;HBC - Francisco;HBC - Ek;FIL - Larissa;EAM - Everton;OMONES - Claudio;IEPON - Duda;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -995,3 +996,4 @@ SEX;3;ING - Cris;GEO - Larissa;QUI - Valéria;ART - Rubi;PTS - Rosa;HIS - Franci
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
