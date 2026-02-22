@@ -6,7 +6,7 @@ import { classSchedules, classColorMap, teacherSchedules, days } from "@/data/sc
 import type { Lesson, DayName } from "@/data/schedule";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CalendarDays, Clock, ChevronDown } from "lucide-react";
+import { CalendarDays, Clock } from "lucide-react";
 import { CalendarPreview } from "@/components/CalendarPreview";
 
 const getSubjectCode = (lessonName: string) => {
@@ -142,6 +142,20 @@ const Index = () => {
   const [showTeacherSection, setShowTeacherSection] = useState(false);
   const [showClassSection, setShowClassSection] = useState(false);
 
+  // ORDER classes: 6ºs, 7ºs, 8ºs, 9ºs, 1ºs, 2ºs, 3ºs
+  const orderedClassSchedules = useMemo(() => {
+    const gradeOrder = ["6", "7", "8", "9", "1", "2", "3"];
+    return [...classSchedules].sort((a, b) => {
+      const matchA = a.name.match(/(\d+)º/);
+      const matchB = b.name.match(/(\d+)º/);
+      const ga = matchA ? gradeOrder.indexOf(matchA[1]) : gradeOrder.length;
+      const gb = matchB ? gradeOrder.indexOf(matchB[1]) : gradeOrder.length;
+      if (ga !== gb) return ga - gb;
+      // same grade — keep a stable order by name
+      return a.name.localeCompare(b.name, "pt-BR");
+    });
+  }, [classSchedules]);
+
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
   const classMap = useMemo(() => new Map(classSchedules.map((classItem) => [classItem.name, classItem])), []);
 
@@ -183,8 +197,7 @@ const Index = () => {
 
   const todayLessons = useMemo(() => {
     if (!todayName) return [];
-    const scheduleByDay =
-      todayMode === "teacher" ? todayTeacherSchedule?.scheduleByDay : todayClassSchedule?.scheduleByDay;
+    const scheduleByDay = todayMode === "teacher" ? todayTeacherSchedule.scheduleByDay : todayClassSchedule.scheduleByDay;
     if (!scheduleByDay) return [];
     const dayBucket = scheduleByDay[todayName];
     return [...dayBucket.morning, ...dayBucket.afternoon];
@@ -229,7 +242,7 @@ const Index = () => {
             <DialogContent className="max-w-[92vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-xl">
               <DialogHeader className="px-6 pt-6">
                 <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Calendário</DialogTitle>
-                <p className="text-sm text-white/70">O dia de hoje permanece em destaque, mesmo que outro seja selecioando.</p>
+                <p className="text-sm text-white/70">Visual rápido do mês atual, no mesmo estilo da home.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
                 <CalendarPreview monthDate={monthDate} selectedDate={selectedCalendarDate} onSelectDate={(d) => setSelectedCalendarDate(d)} />
@@ -240,7 +253,7 @@ const Index = () => {
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                className="h-12 w-full justify-between rounded-2xl border border-white/10 bg-emerald-500/15 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1"
+                className="h-12 w-full justify-between rounded-2xl border border-emerald-500/10 bg-emerald-500/10 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1"
               >
                 <span className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-emerald-300" />
@@ -252,7 +265,7 @@ const Index = () => {
             <DialogContent className="max-w-[92vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-2xl">
               <DialogHeader className="px-6 pt-6">
                 <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Aulas de hoje</DialogTitle>
-                <p className="text-sm text-white/70">Selecione professor(a) ou turma.</p>
+                <p className="text-sm text-white/70">O sistema usa automaticamente o dia/horário do seu dispositivo.</p>
               </DialogHeader>
               <div className="px-6 pb-6">
                 <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -308,7 +321,7 @@ const Index = () => {
                             <SelectValue placeholder="Escolha uma turma" />
                           </SelectTrigger>
                           <SelectContent className="border-white/10 bg-slate-900 text-white">
-                            {classSchedules.map((classItem) => (
+                            {orderedClassSchedules.map((classItem) => (
                               <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
                                 {classItem.name}
                               </SelectItem>
@@ -383,7 +396,6 @@ const Index = () => {
                   className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
                 >
                   {showTeacherSection ? "Recolher" : "Expandir"}
-                  <ChevronDown className={`h-4 w-4 transition-transform ${showTeacherSection ? "rotate-180" : ""}`} />
                 </Button>
               </div>
             </div>
@@ -420,7 +432,7 @@ const Index = () => {
                       <SelectValue placeholder="Escolha uma turma" />
                     </SelectTrigger>
                     <SelectContent className="border-white/10 bg-slate-900 text-white">
-                      {classSchedules.map((classItem) => (
+                      {orderedClassSchedules.map((classItem) => (
                         <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
                           {classItem.name}
                         </SelectItem>
@@ -435,7 +447,6 @@ const Index = () => {
                   className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
                 >
                   {showClassSection ? "Recolher" : "Expandir"}
-                  <ChevronDown className={`h-4 w-4 transition-transform ${showClassSection ? "rotate-180" : ""}`} />
                 </Button>
               </div>
             </div>
