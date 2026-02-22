@@ -36,11 +36,11 @@ const afternoonSlots = [
 interface Lesson {
   id: string;
   teacher: string;
-  className: string; // e.g. "8º AM - MAT"
-  classGroup: string; // e.g. "8º AM"
+  className: string;
+  classGroup: string;
   day: DayName;
   shift: Shift;
-  slot: number; // 0..4 within shift
+  slot: number;
   periodLabel: string;
   time: string;
 }
@@ -66,7 +66,18 @@ const detectDelimiter = (headerLine: string) => {
   return semi >= comma ? ";" : ",";
 };
 
-const normalizeCell = (value: string) => stripBom(value).replace(/^"|"$/g, "").trim();
+const normalizeCell = (value: string) =>
+  stripBom(value)
+    .replace(/\t/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^"|"$/g, "")
+    .trim();
+
+const normalizeClassGroup = (value: string) =>
+  value
+    .replace(/\t/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
 const createEmptySchedule = (): Record<DayName, { morning: Lesson[]; afternoon: Lesson[] }> => {
   return days.reduce((acc, day) => {
@@ -78,6 +89,7 @@ const createEmptySchedule = (): Record<DayName, { morning: Lesson[]; afternoon: 
 const splitDisciplineTeacher = (value: string): { subject: string; teacher: string } | null => {
   const text = value.trim();
   if (!text) return null;
+  if (text.toLowerCase() === "sem aula") return null;
   const idx = text.lastIndexOf(" - ");
   if (idx === -1) return null;
   const subject = text.slice(0, idx).trim();
@@ -87,14 +99,25 @@ const splitDisciplineTeacher = (value: string): { subject: string; teacher: stri
 };
 
 const inferShiftFromHeaders = (headers: string[]): Shift | null => {
-  // morning sheet includes "8º AM" etc; afternoon sheet includes "6º AV" etc
   const joined = headers.join("|");
-  if (/\b\d+º\s*(AM|BM)\b/.test(joined) || /\b\d+º\s*AM\b/.test(joined)) return "morning";
-  if (/\b\d+º\s*(AV|BV)\b/.test(joined) || /\b\d+º\s*AV\b/.test(joined)) return "afternoon";
+  if (/\b\d+º\s*(AM|BM)\b/.test(joined)) return "morning";
+  if (/\b\d+º\s*(AV|BV)\b/.test(joined)) return "afternoon";
   return null;
 };
 
-const parseMatrixCsv = (csv: string) => {
+const mapRawDayToMatrixKey = (rawDay: string | undefined): MatrixDayKey | null => {
+  if (!rawDay) return null;
+  const v = rawDay.trim().toLowerCase();
+  if (v.startsWith("seg")) return "SEG";
+  if (v.startsWith("ter")) return "TER";
+  if (v.startsWith("terça") || v.startsWith("terca")) return "TER";
+  if (v.startsWith("qua")) return "QUA";
+  if (v.startsWith("qui")) return "QUI";
+  if (v.startsWith("sex")) return "SEX";
+  return null;
+};
+
+const parseMatrixCsv = (csv: string, forceShift?: Shift) => {
   const lines = stripBom(csv)
     .split(/\r?\n/)
     .map((l) => l.trimEnd())
@@ -107,9 +130,14 @@ const parseMatrixCsv = (csv: string) => {
   const delimiter = detectDelimiter(lines[0]);
   const headers = lines[0].split(delimiter).map(normalizeCell);
 
-  // expects: Dia;Horário;Turma1;Turma2...
-  const classGroups = headers.slice(2).map((h) => h.trim()).filter(Boolean);
-  const shift = inferShiftFromHeaders(classGroups);
+  // Dia;Horário;Turma1;Turma2...
+  const headerClassGroups = headers
+    .slice(2)
+    .map((h) => normalizeClassGroup(h))
+    .filter((h) => h.length > 0);
+
+  const inferred = inferShiftFromHeaders(headerClassGroups);
+  const shift = forceShift ?? inferred;
 
   const slotInfoByIndex = (slotIndex: number) => {
     if (!shift) return null;
@@ -126,8 +154,8 @@ const parseMatrixCsv = (csv: string) => {
     const rawHour = cols[1];
 
     if (rawDay) {
-      const key = rawDay.toUpperCase() as MatrixDayKey;
-      if (key in matrixDayToDayName) currentMatrixDay = key;
+      const mapped = mapRawDayToMatrixKey(rawDay);
+      if (mapped) currentMatrixDay = mapped;
     }
 
     if (!currentMatrixDay) continue;
@@ -141,8 +169,8 @@ const parseMatrixCsv = (csv: string) => {
     const slotInfo = slotInfoByIndex(slot);
     if (!slotInfo) continue;
 
-    for (let c = 0; c < classGroups.length; c += 1) {
-      const classGroup = classGroups[c];
+    for (let c = 0; c < headerClassGroups.length; c += 1) {
+      const classGroup = headerClassGroups[c];
       const cell = cols[2 + c] ?? "";
       if (!cell) continue;
 
@@ -165,7 +193,7 @@ const parseMatrixCsv = (csv: string) => {
     }
   }
 
-  return { shift, classGroups, lessons };
+  return { shift, classGroups: headerClassGroups, lessons };
 };
 
 const sortLessons = (lessons: Lesson[]) => {
@@ -196,30 +224,40 @@ const groupByDay = (lessons: Lesson[]): Record<DayName, { morning: Lesson[]; aft
   return grouped;
 };
 
-const parsedA = parseMatrixCsv(matrixARaw as string);
-const parsedB = parseMatrixCsv(matrixBRaw as string);
+const parsedA = parseMatrixCsv(matrixARaw as string, "morning");
+const parsedB = parseMatrixCsv(matrixBRaw as string, "afternoon");
 
 const allLessons = [...parsedA.lessons, ...parsedB.lessons];
 
-// Build class order: keep order as it appears in sheets, morning first then afternoon,
-// but avoid duplicates.
+// class order: (A headers) + (B headers) + (any group found in lessons)
 const classGroups: string[] = [];
-const seenClasses = new Set<string>();
+const seen = new Set<string>();
+
 [parsedA.classGroups, parsedB.classGroups].forEach((groups) => {
   groups.forEach((g) => {
-    if (!seenClasses.has(g)) {
-      seenClasses.add(g);
-      classGroups.push(g);
-    }
+    const key = normalizeClassGroup(g);
+    if (!key) return;
+    if (seen.has(key)) return;
+    seen.add(key);
+    classGroups.push(key);
   });
+});
+
+allLessons.forEach((l) => {
+  const key = normalizeClassGroup(l.classGroup);
+  if (!key) return;
+  if (seen.has(key)) return;
+  seen.add(key);
+  classGroups.push(key);
 });
 
 // class schedules
 const classLessonBuckets = new Map<string, Lesson[]>();
 allLessons.forEach((lesson) => {
-  const bucket = classLessonBuckets.get(lesson.classGroup) ?? [];
-  bucket.push(lesson);
-  classLessonBuckets.set(lesson.classGroup, bucket);
+  const key = normalizeClassGroup(lesson.classGroup);
+  const bucket = classLessonBuckets.get(key) ?? [];
+  bucket.push({ ...lesson, classGroup: key });
+  classLessonBuckets.set(key, bucket);
 });
 
 const classSchedules: ClassSchedule[] = classGroups.map((groupName) => {
@@ -232,7 +270,7 @@ const classSchedules: ClassSchedule[] = classGroups.map((groupName) => {
   };
 });
 
-// teacher schedules (derived)
+// teacher schedules
 const teacherMap = new Map<string, Lesson[]>();
 allLessons.forEach((lesson) => {
   const bucket = teacherMap.get(lesson.teacher) ?? [];
@@ -241,7 +279,7 @@ allLessons.forEach((lesson) => {
 });
 
 const teacherSchedules: TeacherSchedule[] = Array.from(teacherMap.entries())
-  .sort(([a], [b]) => a.localeCompare(b))
+  .sort(([a], [b]) => a.localeCompare(b, "pt-BR"))
   .map(([teacher, lessons]) => {
     const sorted = [...lessons];
     sortLessons(sorted);
