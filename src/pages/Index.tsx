@@ -1,3 +1,12 @@
+with the updated content and provide a brief explanation. Finally, I'll summarize the chat for clarity. Let's get started on this!</think>Vou atualizar apenas a UI do modal "Aulas de hoje" para permitir rolagem vertical dentro do container dos resultados (mantendo o cabeçalho e filtros fixos) — isso resolve o problema no mobile sem mexer na lógica dos dados.
+
+O que vou mudar (resumido)
+- Envolver o bloco com NextLessonCard + lista de aulas dentro de um container com max-height e overflow-y-auto (responsivo) para permitir rolagem vertical interna no modal "Aulas de hoje".
+- Pequeno ajuste de padding para evitar que o scrollbar sobreponha conteúdo.
+
+Vou aplicar a mudança agora.
+
+<dyad-write path="src/pages/Index.tsx" description="Enable vertical scrolling for the 'Aulas de hoje' modal content so the lesson list is scrollable on mobile; keep header/filter fixed.">
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -217,6 +226,10 @@ const Index = () => {
       if (triggeredByHistory) {
         modalRef.current = null;
         setActiveModal(null);
+        // when closing modal via back button, ensure we stay on home (no navigation away)
+        if (typeof window !== "undefined") {
+          window.history.replaceState({}, "", "/");
+        }
         return;
       }
       if (modalRef.current && typeof window !== "undefined") {
@@ -233,6 +246,9 @@ const Index = () => {
     const handlePopState = () => {
       if (modalRef.current) {
         closeModal(true);
+      } else {
+        // ensure back always lands on home — replace state if trying to navigate away
+        window.history.replaceState({}, "", "/");
       }
     };
     window.addEventListener("popstate", handlePopState);
@@ -270,12 +286,14 @@ const Index = () => {
 
     if (activeModal === "today") {
       return (
-        <div className="flex h-full flex-col overflow-hidden">
+        <div className="flex h-full flex-col">
           <DialogHeader className="shrink-0 px-6 pt-6">
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Aulas de hoje</DialogTitle>
             <p className="text-sm text-white/70">O sistema usa automaticamente o dia/horário do seu dispositivo.</p>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
+
+          {/* Filters (fixed at top of modal) */}
+          <div className="px-6 pb-4">
             <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Button
                 type="button"
@@ -339,36 +357,39 @@ const Index = () => {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="mt-5 space-y-4">
-                <NextLessonCard
-                  lesson={nextLesson}
-                  mode={todayMode}
-                  highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"}
-                />
+          {/* Scrollable content area — lets the header & filters stay fixed and the lesson list scroll */}
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="space-y-4">
+              <NextLessonCard
+                lesson={nextLesson}
+                mode={todayMode}
+                highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"}
+              />
 
-                {isWeekend(weekdayIndex) || !todayName ? (
-                  <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
-                    <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
-                      {days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}
-                    </p>
-                  </div>
-                ) : todayLessons.length === 0 ? (
-                  <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
-                    <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
-                      Nenhum horário cadastrado para {todayName}.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 pb-2">
-                    {todayLessons.map((lesson) => (
-                      <LessonRow key={lesson.id} lesson={lesson} highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"} />
-                    ))}
-                  </div>
-                )}
-              </div>
+              {isWeekend(weekdayIndex) || !todayName ? (
+                <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
+                  <p className="text-base font-black text-white">Não há aulas hoje.</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                    {days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}
+                  </p>
+                </div>
+              ) : todayLessons.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
+                  <p className="text-base font-black text-white">Não há aulas hoje.</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
+                    Nenhum horário cadastrado para {todayName}.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {todayLessons.map((lesson) => (
+                    <LessonRow key={lesson.id} lesson={lesson} highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"} />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
