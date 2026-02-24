@@ -26,11 +26,11 @@ const morningSlots = [
 ];
 
 const afternoonSlots = [
-  { label: "1º Horário", time: "13:30 – 14:10" },
-  { label: "2º Horário", time: "14:10 – 14:50" },
-  { label: "3º Horário", time: "14:50 – 15:30" },
-  { label: "4º Horário", time: "16:00 – 16:40" },
-  { label: "5º Horário", time: "16:40 – 17:20" },
+  { label: "1º Horário", time: "13:10 – 13:50" },
+  { label: "2º Horário", time: "13:50 – 14:30" },
+  { label: "3º Horário", time: "14:30 – 15:10" },
+  { label: "4º Horário", time: "15:40 – 16:30" },
+  { label: "5º Horário", time: "16:30 – 17:10" },
 ];
 
 interface Lesson {
