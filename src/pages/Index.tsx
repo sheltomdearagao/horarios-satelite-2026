@@ -388,8 +388,8 @@ const Index: React.FC = () => {
                 <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Turma</div>
                 <div className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-64">
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+                <div className="w-full sm:w-64">
                   <Select
                     value={selectedClass}
                     onValueChange={(v) => {
