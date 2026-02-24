@@ -158,7 +158,7 @@ const Index: React.FC = () => {
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Calendário</DialogTitle>
             <p className="text-sm text-white/70">Visual do mês atual</p>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="no-scrollbar flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
             <CalendarPreview
               monthDate={new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1)}
               selectedDate={selectedCalendarDate}
@@ -220,7 +220,7 @@ const Index: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-6 pt-4">
+          <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-safe pt-4 sm:px-6">
             <div className="space-y-4">
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase text-white/60">Próxima aula</p>
@@ -297,51 +297,55 @@ const Index: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
-      <div className="mx-auto max-w-6xl px-4">
-        <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-0.5">
-            <img src="/icon-512-transparent.png" alt="Logo" className="h-full w-full object-contain" />
+    <main className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="mx-auto max-w-6xl px-3 pb-safe pt-safe sm:px-4">
+        <header className="rounded-[2.25rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
+          <div className="flex items-center gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white p-0.5 sm:h-20 sm:w-20">
+              <img src="/icon-512-transparent.png" alt="Logo" className="h-full w-full object-contain" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[1.35rem] font-extrabold tracking-tight text-white sm:text-2xl">Horários 2026</div>
+              <div className="mt-0.5 truncate text-sm text-white/80">Colégio Estadual Satélite</div>
+            </div>
           </div>
-          <div>
-            <div className="text-2xl font-extrabold text-white">Horários 2026</div>
-            <div className="text-sm text-white/80">Colégio Estadual Satélite</div>
+
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Button onClick={() => openModal("calendar")} className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10">
+              <span className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-emerald-300" />
+                <span className="font-black uppercase tracking-[0.18em]">Calendário</span>
+              </span>
+              <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
+            </Button>
+
+            <Button onClick={() => openModal("today")} className="h-12 w-full justify-between rounded-2xl bg-emerald-500/10 px-4 text-white hover:bg-emerald-500/15">
+              <span className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-emerald-300" />
+                <span className="font-black uppercase tracking-[0.18em]">Aulas de hoje</span>
+              </span>
+              <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
+            </Button>
           </div>
         </header>
 
-        <div className="flex gap-3 mt-6">
-          <Button onClick={() => openModal("calendar")} className="flex-1 h-12 rounded-2xl">
-            <span className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-emerald-300" /> Calendário
-            </span>
-            <span className="text-xs text-white/70 ml-auto">{formatShortDateForButton(now)}</span>
-          </Button>
-
-          <Button onClick={() => openModal("today")} className="flex-1 h-12 rounded-2xl bg-emerald-500/10">
-            <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-300" /> Aulas de hoje
-            </span>
-            <span className="text-xs text-white/70 ml-auto">{formatShortDateForButton(now)}</span>
-          </Button>
-        </div>
-
         <Dialog open={Boolean(activeModal)} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
           {activeModal && (
-            <DialogContent className="max-h-[92vh] max-w-[94vw] rounded-[2rem] border border-white/10 bg-slate-950 p-0 text-white shadow-2xl sm:max-w-2xl">
+            <DialogContent className="max-h-[92vh] max-w-[96vw] rounded-[2rem] border border-white/10 bg-slate-950/95 p-0 text-white shadow-2xl backdrop-blur sm:max-w-2xl">
               {renderModalBody()}
             </DialogContent>
           )}
         </Dialog>
 
-        <div className="mt-8 space-y-8">
-          <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6">
+        <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
+          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Docente</div>
                 <div className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-64">
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+                <div className="w-full sm:w-64">
                   <Select
                     value={selectedTeacher}
                     onValueChange={(v) => {
@@ -378,7 +382,7 @@ const Index: React.FC = () => {
             )}
           </div>
 
-          <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6">
+          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Turma</div>

@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-bg: 228 47% 11%; /* slate-ish */
+    --brand-card: 222 44% 16%;
+    --brand-card-2: 222 40% 20%;
+    --brand-border: 215 30% 28%;
+    --brand-text: 210 40% 98%;
+    --brand-muted: 215 20% 78%;
+    --brand-accent: 160 84% 39%;
+    --brand-accent-2: 38 92% 50%;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars visually but keep scrolling functional */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+
+  /* Safe area helpers for iOS */
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+  .pt-safe {
+    padding-top: calc(env(safe-area-inset-top) + 0.75rem);
+  }
+}
