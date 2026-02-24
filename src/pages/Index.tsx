@@ -1,14 +1,4 @@
-with the updated content and provide a brief explanation. Finally, I'll summarize the chat for clarity. Let's get started on this!</think>Vou atualizar apenas a UI do modal "Aulas de hoje" para permitir rolagem vertical dentro do container dos resultados (mantendo o cabeçalho e filtros fixos) — isso resolve o problema no mobile sem mexer na lógica dos dados.
-
-O que vou mudar (resumido)
-- Envolver o bloco com NextLessonCard + lista de aulas dentro de um container com max-height e overflow-y-auto (responsivo) para permitir rolagem vertical interna no modal "Aulas de hoje".
-- Pequeno ajuste de padding para evitar que o scrollbar sobreponha conteúdo.
-
-Vou aplicar a mudança agora.
-
-<dyad-write path="src/pages/Index.tsx" description="Enable vertical scrolling for the 'Aulas de hoje' modal content so the lesson list is scrollable on mobile; keep header/filter fixed.">
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScheduleGrid } from "@/components/ScheduleGrid";
 import { classSchedules, classColorMap, teacherSchedules, days } from "@/data/schedule";
@@ -16,11 +6,10 @@ import type { Lesson, DayName } from "@/data/schedule";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CalendarDays, Clock } from "lucide-react";
-
 import { CalendarPreview } from "@/components/CalendarPreview";
 
 const getSubjectCode = (lessonName: string) => {
-  const segments = lessonName.split("-").map((segment) => segment.trim());
+  const segments = lessonName.split("-").map((s) => s.trim());
   return segments[segments.length - 1];
 };
 
@@ -33,144 +22,38 @@ const weekdayIndexToDayName = (weekdayIndex: number): DayName | null => {
   return null;
 };
 
-const isWeekend = (weekdayIndex: number) => weekdayIndex === 0 || weekdayIndex === 6;
-
-const dayOrderMap: Record<DayName, number> = days.reduce((acc, day, idx) => {
-  acc[day] = idx;
-  return acc;
-}, {} as Record<DayName, number>);
-
-const getLessonStartMinutes = (lesson: Lesson) => {
-  const [start] = lesson.time.split("–").map((segment) => segment.trim());
-  const [hour, minute] = start.split(":").map((value) => Number(value));
-  return hour * 60 + minute;
-};
-
-const findNextLesson = (lessons: Lesson[], currentDayIndex: number, currentMinutes: number) => {
-  if (!lessons.length) return null;
-
-  const nextInToday = lessons.find((lesson) => {
-    const lessonDayIndex = dayOrderMap[lesson.day];
-    return lessonDayIndex === currentDayIndex && getLessonStartMinutes(lesson) >= currentMinutes;
-  });
-
-  if (nextInToday) return nextInToday;
-
-  const nextDayLesson = lessons.find((lesson) => dayOrderMap[lesson.day] > currentDayIndex);
-  if (nextDayLesson) return nextDayLesson;
-
-  return lessons[0];
-};
+type ModalType = "calendar" | "today" | null;
 
 const formatShortDateForButton = (d: Date) => {
-  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
-    .format(d)
-    .toUpperCase();
+  const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(d).toUpperCase();
   const day = String(d.getDate()).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
   return `${weekday} - ${day}/${month}`;
 };
 
-const LessonRow = ({
-  lesson,
-  highlightColor,
-}: {
-  lesson: Lesson;
-  highlightColor: string;
-}) => {
-  const accent = classColorMap.get(lesson.classGroup) ?? "#A855F7";
-  return (
-    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-      <span className="mt-0.5 h-9 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: accent }} />
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-black uppercase tracking-[0.12em] text-white/90">{lesson.periodLabel}</p>
-          <span
-            className="shrink-0 rounded-full px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.18em]"
-            style={{ backgroundColor: `${highlightColor}22`, color: highlightColor }}
-          >
-            {lesson.shift === "morning" ? "Manhã" : "Tarde"}
-          </span>
-        </div>
-        <p className="mt-1 truncate text-base font-bold text-white">{lesson.className}</p>
-        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">{lesson.time}</p>
-        <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-white/60">
-          Turma: {lesson.classGroup} • Prof(a). {lesson.teacher}
-        </p>
-      </div>
-    </div>
-  );
-};
-
-const NextLessonCard = ({
-  lesson,
-  mode,
-  highlightColor,
-}: {
-  lesson: Lesson | null;
-  mode: "teacher" | "class";
-  highlightColor: string;
-}) => {
-  const accent = lesson ? classColorMap.get(lesson.classGroup) ?? highlightColor : highlightColor;
-  return (
-    <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4 shadow-[0_20px_60px_rgba(2,6,23,0.6)]">
-      <div className="flex items-center justify-between space-x-3 text-[0.65rem] font-black uppercase tracking-[0.4em] text-white/40">
-        <span>Próxima aula</span>
-        {lesson && <span className="text-[0.65rem] text-white/70 uppercase tracking-[0.3em]">{lesson.day}</span>}
-      </div>
-      {lesson ? (
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: accent }} />
-              <p className="text-base font-black uppercase tracking-[0.16em] text-white">{lesson.className}</p>
-            </div>
-            <span
-              className="rounded-full px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.18em]"
-              style={{ backgroundColor: `${highlightColor}25`, color: highlightColor }}
-            >
-              {lesson.periodLabel}
-            </span>
-          </div>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-200/90">{lesson.time}</p>
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/70">
-            {mode === "teacher" ? `Turma: ${lesson.classGroup}` : `Prof(a). ${lesson.teacher}`}
-          </p>
-        </div>
-      ) : (
-        <p className="mt-3 text-sm text-white/70">Sem aulas registradas para este filtro.</p>
-      )}
-    </div>
-  );
-};
-
-type ModalType = "calendar" | "today";
-
-const Index = () => {
+const Index: React.FC = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [activeKeyTeacher, setActiveKeyTeacher] = useState<string | null>(null);
   const [activeKeyGroup, setActiveKeyGroup] = useState<string | null>(null);
   const [showTeacherSection, setShowTeacherSection] = useState(false);
   const [showClassSection, setShowClassSection] = useState(false);
-  const [todayMode, setTodayMode] = useState<"teacher" | "class">("teacher");
-  const [todayTeacher, setTodayTeacher] = useState(teacherSchedules[0]?.name ?? "");
-  const [todayClass, setTodayClass] = useState(classSchedules[0]?.name ?? "");
-  const [activeModal, setActiveModal] = useState<ModalType | null>(null);
 
+  const [todayMode, setTodayMode] = useState<"teacher" | "class">("teacher");
+  const [todayTeacher, setTodayTeacher] = useState<string>(teacherSchedules[0]?.name ?? "");
+  const [todayClass, setTodayClass] = useState<string>(classSchedules[0]?.name ?? "");
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
   const modalRef = useRef<ModalType | null>(null);
 
   const now = new Date();
   const weekdayIndex = now.getDay();
   const todayName = weekdayIndexToDayName(weekdayIndex);
-  const todayLabelFull = new Intl.DateTimeFormat("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-  }).format(now);
+  const todayLabelFull = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(now);
   const minutesNow = now.getHours() * 60 + now.getMinutes();
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date>(now);
-  const monthDate = new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1);
+
+  const teacherMap = useMemo(() => new Map(teacherSchedules.map((t) => [t.name, t])), []);
+  const classMap = useMemo(() => new Map(classSchedules.map((c) => [c.name, c])), []);
 
   const orderedClassSchedules = useMemo(() => {
     const gradeOrder = ["6", "7", "8", "9", "1", "2", "3"];
@@ -184,98 +67,100 @@ const Index = () => {
     });
   }, []);
 
-  const teacherMap = useMemo(() => new Map(teacherSchedules.map((teacher) => [teacher.name, teacher])), []);
-  const classMap = useMemo(() => new Map(classSchedules.map((classItem) => [classItem.name, classItem])), []);
-
   const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
+  const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
+  const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
 
-  const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0];
-  const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0];
+  const dayOrder = days.reduce<Record<DayName, number>>((acc, d, idx) => {
+    acc[d] = idx;
+    return acc;
+  }, {} as Record<DayName, number>);
 
-  const baseLessons = todayMode === "teacher" ? todayTeacherSchedule.lessons : todayClassSchedule.lessons;
-  const nextLesson = useMemo(() => {
-    const currentDayIndex = todayName ? dayOrderMap[todayName] : -1;
-    return findNextLesson(baseLessons, currentDayIndex, minutesNow);
-  }, [baseLessons, minutesNow, todayName]);
+  const findNextLesson = (lessons: Lesson[]) => {
+    if (!lessons || lessons.length === 0) return null;
+    const currentDayIndex = todayName ? dayOrder[todayName] : -1;
+    for (const lesson of lessons) {
+      const lessonDayIndex = dayOrder[lesson.day];
+      if (lessonDayIndex < currentDayIndex) continue;
+      if (lessonDayIndex === currentDayIndex) {
+        const [start] = lesson.time.split("–").map((s) => s.trim());
+        const [h, m] = start.split(":").map(Number);
+        const minutes = (h || 0) * 60 + (m || 0);
+        if (minutes >= minutesNow) return lesson;
+      } else {
+        return lesson;
+      }
+    }
+    return lessons[0] ?? null;
+  };
+
+  const baseLessons = todayMode === "teacher" ? (todayTeacherSchedule?.lessons ?? []) : (todayClassSchedule?.lessons ?? []);
+  const nextLesson = useMemo(() => findNextLesson(baseLessons), [baseLessons, minutesNow, todayMode, todayTeacher, todayClass]);
+
+  const openModal = useCallback((modal: Exclude<ModalType, null>) => {
+    if (typeof window === "undefined") return;
+    if (modalRef.current === null) {
+      window.history.pushState({ modal }, "", `#${modal}`);
+    } else {
+      window.history.replaceState({ modal }, "", `#${modal}`);
+    }
+    modalRef.current = modal;
+    setActiveModal(modal);
+  }, []);
+
+  const closeModal = useCallback((fromPopState = false) => {
+    modalRef.current = null;
+    setActiveModal(null);
+    if (!fromPopState && typeof window !== "undefined") {
+      window.history.back();
+    } else if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const onPop = () => {
+      if (modalRef.current) {
+        closeModal(true);
+      } else {
+        window.history.replaceState({}, "", "/");
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [closeModal]);
+
+  const handleTeacherLessonClick = (lesson: Lesson) => {
+    const key = `${getSubjectCode(lesson.className)}|${lesson.classGroup}`;
+    setActiveKeyTeacher((cur) => (cur === key ? null : key));
+  };
+
+  const handleClassLessonClick = (lesson: Lesson) => {
+    const key = getSubjectCode(lesson.className);
+    setActiveKeyGroup((cur) => (cur === key ? null : key));
+  };
 
   const todayLessons = useMemo(() => {
     if (!todayName) return [];
     const scheduleByDay = todayMode === "teacher" ? todayTeacherSchedule.scheduleByDay : todayClassSchedule.scheduleByDay;
     if (!scheduleByDay) return [];
     const dayBucket = scheduleByDay[todayName];
-    return [...dayBucket.morning, ...dayBucket.afternoon];
+    return [...(dayBucket?.morning ?? []), ...(dayBucket?.afternoon ?? [])];
   }, [todayClassSchedule?.scheduleByDay, todayMode, todayName, todayTeacherSchedule?.scheduleByDay]);
-
-  const openModal = useCallback((modal: ModalType) => {
-    if (modalRef.current === modal) return;
-    if (typeof window !== "undefined") {
-      if (modalRef.current) {
-        modalRef.current = modal;
-        window.history.replaceState({ modal }, "", `#${modal}`);
-      } else {
-        modalRef.current = modal;
-        window.history.pushState({ modal }, "", `#${modal}`);
-      }
-    }
-    setActiveModal(modal);
-  }, []);
-
-  const closeModal = useCallback(
-    (triggeredByHistory = false) => {
-      if (triggeredByHistory) {
-        modalRef.current = null;
-        setActiveModal(null);
-        // when closing modal via back button, ensure we stay on home (no navigation away)
-        if (typeof window !== "undefined") {
-          window.history.replaceState({}, "", "/");
-        }
-        return;
-      }
-      if (modalRef.current && typeof window !== "undefined") {
-        window.history.back();
-      } else {
-        setActiveModal(null);
-      }
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-    const handlePopState = () => {
-      if (modalRef.current) {
-        closeModal(true);
-      } else {
-        // ensure back always lands on home — replace state if trying to navigate away
-        window.history.replaceState({}, "", "/");
-      }
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [closeModal]);
-
-  const handleTeacherLessonClick = (lesson: Lesson) => {
-    const key = `${getSubjectCode(lesson.className)}|${lesson.classGroup}`;
-    setActiveKeyTeacher((current) => (current === key ? null : key));
-  };
-
-  const handleClassLessonClick = (lesson: Lesson) => {
-    const key = getSubjectCode(lesson.className);
-    setActiveKeyGroup((current) => (current === key ? null : key));
-  };
 
   const renderModalBody = () => {
     if (activeModal === "calendar") {
       return (
         <div className="flex h-full flex-col overflow-hidden">
-          <DialogHeader className="shrink-0 px-6 pt-6">
+          <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Calendário</DialogTitle>
-            <p className="text-sm text-white/70">Visual rápido do mês atual, no mesmo estilo da home.</p>
+            <p className="text-sm text-white/70">Visual do mês atual</p>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
+          <div className="flex-1 overflow-y-auto p-6">
             <CalendarPreview
-              monthDate={monthDate}
+              monthDate={new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1)}
               selectedDate={selectedCalendarDate}
               onSelectDate={(d) => setSelectedCalendarDate(d)}
             />
@@ -287,106 +172,118 @@ const Index = () => {
     if (activeModal === "today") {
       return (
         <div className="flex h-full flex-col">
-          <DialogHeader className="shrink-0 px-6 pt-6">
+          <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Aulas de hoje</DialogTitle>
-            <p className="text-sm text-white/70">O sistema usa automaticamente o dia/horário do seu dispositivo.</p>
+            <p className="text-sm text-white/70">O sistema usa o dia/horário do seu dispositivo</p>
           </DialogHeader>
 
-          {/* Filters (fixed at top of modal) */}
-          <div className="px-6 pb-4">
-            <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Button
-                type="button"
-                onClick={() => setTodayMode("teacher")}
-                className={`h-12 rounded-2xl border px-5 text-sm font-black uppercase tracking-[0.22em] ${
-                  todayMode === "teacher"
-                    ? "border-emerald-400/50 bg-emerald-500/20 text-white"
-                    : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
-                }`}
-              >
-                Por professor
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setTodayMode("class")}
-                className={`h-12 rounded-2xl border px-5 text-sm font-black uppercase tracking-[0.22em] ${
-                  todayMode === "class"
-                    ? "border-amber-400/50 bg-amber-500/20 text-white"
-                    : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
-                }`}
-              >
-                Por turma
-              </Button>
-            </div>
+          <div className="px-6 pt-4 pb-3 bg-slate-950/80 z-10">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex gap-3">
+                <Button onClick={() => setTodayMode("teacher")} className={`h-11 rounded-2xl ${todayMode === "teacher" ? "bg-emerald-500/20" : "bg-white/5"}`}>
+                  Por professor
+                </Button>
+                <Button onClick={() => setTodayMode("class")} className={`h-11 rounded-2xl ${todayMode === "class" ? "bg-amber-500/20" : "bg-white/5"}`}>
+                  Por turma
+                </Button>
+              </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 sm:p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-white/50">Filtro</p>
-                  <p className="mt-1 text-lg font-black text-white">{todayMode === "teacher" ? todayTeacher : todayClass}</p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/55">{todayLabelFull}</p>
-                </div>
-
-                <div className="w-full sm:max-w-sm">
-                  {todayMode === "teacher" ? (
-                    <Select value={todayTeacher} onValueChange={setTodayTeacher}>
-                      <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
-                        <SelectValue placeholder="Escolha um professor" />
-                      </SelectTrigger>
-                      <SelectContent className="border-white/10 bg-slate-900 text-white">
-                        {teacherSchedules.map((teacher) => (
-                          <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
-                            {teacher.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Select value={todayClass} onValueChange={setTodayClass}>
-                      <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
-                        <SelectValue placeholder="Escolha uma turma" />
-                      </SelectTrigger>
-                      <SelectContent className="border-white/10 bg-slate-900 text-white">
-                        {orderedClassSchedules.map((classItem) => (
-                          <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
-                            {classItem.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
+              <div className="flex items-center justify-end gap-3">
+                {todayMode === "teacher" ? (
+                  <Select value={todayTeacher} onValueChange={(v) => setTodayTeacher(v)}>
+                    <SelectTrigger className="h-11 rounded-xl bg-slate-900/60">
+                      <SelectValue placeholder="Escolha um professor" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-900">
+                      {teacherSchedules.map((t) => (
+                        <SelectItem key={t.name} value={t.name}>
+                          {t.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select value={todayClass} onValueChange={(v) => setTodayClass(v)}>
+                    <SelectTrigger className="h-11 rounded-xl bg-slate-900/60">
+                      <SelectValue placeholder="Escolha uma turma" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-900">
+                      {orderedClassSchedules.map((c) => (
+                        <SelectItem key={c.name} value={c.name}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Scrollable content area — lets the header & filters stay fixed and the lesson list scroll */}
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
+          <div className="flex-1 overflow-y-auto px-6 pb-6 pt-4">
             <div className="space-y-4">
-              <NextLessonCard
-                lesson={nextLesson}
-                mode={todayMode}
-                highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"}
-              />
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4">
+                <p className="text-xs uppercase text-white/60">Próxima aula</p>
+                {nextLesson ? (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-3 w-3 rounded-full"
+                          style={{ backgroundColor: classColorMap.get(nextLesson.classGroup) ?? "#A855F7" }}
+                        />
+                        <div className="font-black text-white">{nextLesson.className}</div>
+                      </div>
+                      <div
+                        className="text-xs font-bold px-3 py-1 rounded-full text-white/80"
+                        style={{ backgroundColor: "#ffffff12" }}
+                      >
+                        {nextLesson.periodLabel}
+                      </div>
+                    </div>
+                    <div className="mt-2 text-sm text-white/70">{nextLesson.time}</div>
+                  </div>
+                ) : (
+                  <div className="mt-2 text-sm text-white/70">Sem próxima aula encontrada.</div>
+                )}
+              </div>
 
-              {isWeekend(weekdayIndex) || !todayName ? (
+              {(!todayName || weekdayIndex === 0 || weekdayIndex === 6) ? (
                 <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
                   <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
-                    {days.length ? "Apenas Segunda a Sexta" : "Fim de semana"}
-                  </p>
+                  <p className="mt-1 text-xs text-white/60">Apenas Segunda a Sexta</p>
                 </div>
               ) : todayLessons.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-slate-900/30 px-4 py-4 text-sm text-white/80">
                   <p className="text-base font-black text-white">Não há aulas hoje.</p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.22em] text-white/55">
-                    Nenhum horário cadastrado para {todayName}.
-                  </p>
+                  <p className="mt-1 text-xs text-white/60">Nenhum horário cadastrado para {todayName}.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {todayLessons.map((lesson) => (
-                    <LessonRow key={lesson.id} lesson={lesson} highlightColor={todayMode === "teacher" ? "#10b981" : "#f59e0b"} />
+                    <div key={lesson.id}>
+                      <div className="mb-2 flex items-center justify-between">
+                        <div className="text-xs text-white/60 font-bold uppercase">{lesson.periodLabel}</div>
+                        <div className="text-xs text-white/60">{lesson.time}</div>
+                      </div>
+                      <div className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="h-3 w-3 rounded-full"
+                              style={{ backgroundColor: classColorMap.get(lesson.classGroup) ?? "#A855F7" }}
+                            />
+                            <div className="font-bold text-white">{lesson.className}</div>
+                          </div>
+                          <div className="text-xs text-white/70 uppercase">
+                            {lesson.shift === "morning" ? "Manhã" : "Tarde"}
+                          </div>
+                        </div>
+                        <div className="mt-2 text-sm text-white/70">
+                          {lesson.teacher} • {lesson.classGroup}
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -401,45 +298,32 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-slate-950 py-6 text-slate-100">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4">
+      <div className="mx-auto max-w-6xl px-4">
         <header className="flex items-center gap-4 rounded-[2rem] border border-white/10 bg-[#0d1b2a] px-5 py-4 shadow-[0_28px_80px_rgba(3,7,18,0.7)]">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-0.5">
-            <img src="/icon-512-transparent.png" alt="Logo C.E. Satélite" className="h-full w-full object-contain" />
+            <img src="/icon-512-transparent.png" alt="Logo" className="h-full w-full object-contain" />
           </div>
-          <div className="flex flex-col">
-            <p className="text-2xl font-extrabold leading-tight text-white">Horários 2026</p>
-            <p className="mt-0.5 text-base font-medium leading-tight text-white/80">Colégio Estadual Satélite</p>
+          <div>
+            <div className="text-2xl font-extrabold text-white">Horários 2026</div>
+            <div className="text-sm text-white/80">Colégio Estadual Satélite</div>
           </div>
         </header>
 
-        <section className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-          <Button
-            type="button"
-            onClick={() => openModal("calendar")}
-            variant="secondary"
-            className="h-12 w-full justify-between rounded-2xl border border-white/10 bg-white/5 px-5 text-white shadow-[0_20px_50px_rgba(15,23,42,0.45)] backdrop-blur-sm hover:bg-white/10 sm:w-auto sm:flex-1"
-          >
-            <span className="flex items-center gap-3">
-              <CalendarDays className="h-5 w-5 text-emerald-300" />
-              <span className="text-sm font-black uppercase tracking-[0.22em]">Calendário</span>
+        <div className="flex gap-3 mt-6">
+          <Button onClick={() => openModal("calendar")} className="flex-1 h-12 rounded-2xl">
+            <span className="flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-emerald-300" /> Calendário
             </span>
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-              {new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(now)}
-            </span>
+            <span className="text-xs text-white/70 ml-auto">{formatShortDateForButton(now)}</span>
           </Button>
 
-          <Button
-            type="button"
-            onClick={() => openModal("today")}
-            className="h-12 w-full justify-between rounded-2xl border border-emerald-500/10 bg-emerald-500/10 px-5 text-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] backdrop-blur-sm hover:bg-emerald-500/20 sm:w-auto sm:flex-1"
-          >
-            <span className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-emerald-300" />
-              <span className="text-sm font-black uppercase tracking-[0.22em]">Aulas de hoje</span>
+          <Button onClick={() => openModal("today")} className="flex-1 h-12 rounded-2xl bg-emerald-500/10">
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-300" /> Aulas de hoje
             </span>
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">{formatShortDateForButton(now)}</span>
+            <span className="text-xs text-white/70 ml-auto">{formatShortDateForButton(now)}</span>
           </Button>
-        </section>
+        </div>
 
         <Dialog open={Boolean(activeModal)} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
           {activeModal && (
@@ -449,40 +333,35 @@ const Index = () => {
           )}
         </Dialog>
 
-        <section className="space-y-10">
-          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-white/5 px-6 py-8 shadow-2xl">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Docente</p>
-                <h2 className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</h2>
+        <div className="mt-8 space-y-8">
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Docente</div>
+                <div className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</div>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                <div className="w-full max-w-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-64">
                   <Select
                     value={selectedTeacher}
-                    onValueChange={(value) => {
-                      setSelectedTeacher(value);
+                    onValueChange={(v) => {
+                      setSelectedTeacher(v);
                       setShowTeacherSection(true);
                     }}
                   >
-                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                    <SelectTrigger className="h-12 rounded-xl bg-slate-900/60">
                       <SelectValue placeholder="Escolha um professor" />
                     </SelectTrigger>
-                    <SelectContent className="border-white/10 bg-slate-900 text-white">
-                      {teacherSchedules.map((teacher) => (
-                        <SelectItem key={teacher.name} className="rounded-lg focus:bg-emerald-500 focus:text-white" value={teacher.name}>
-                          {teacher.name}
+                    <SelectContent className="bg-slate-900">
+                      {teacherSchedules.map((t) => (
+                        <SelectItem key={t.name} value={t.name}>
+                          {t.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setShowTeacherSection((prev) => !prev)}
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
-                >
+                <Button onClick={() => setShowTeacherSection((p) => !p)} variant="secondary">
                   {showTeacherSection ? "Recolher" : "Expandir"}
                 </Button>
               </div>
@@ -494,46 +373,39 @@ const Index = () => {
                 classColorMap={classColorMap}
                 onLessonClick={handleTeacherLessonClick}
                 activeKey={activeKeyTeacher}
-                getLessonKey={(l) => `${getSubjectCode(l.className)}|${l.classGroup}`}
-                showTeacher={false}
-                highlightColor="#10b981"
+                getLessonKey={(lesson) => `${getSubjectCode(lesson.className)}|${lesson.classGroup}`}
               />
             )}
           </div>
 
-          <div className="flex flex-col gap-6 rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent px-6 py-8 shadow-2xl">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="space-y-1">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white/50">Visão por Turma</p>
-                <h2 className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</h2>
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Turma</div>
+                <div className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</div>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                <div className="w-full max-w-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-64">
                   <Select
                     value={selectedClass}
-                    onValueChange={(value) => {
-                      setSelectedClass(value);
+                    onValueChange={(v) => {
+                      setSelectedClass(v);
                       setShowClassSection(true);
                     }}
                   >
-                    <SelectTrigger className="h-12 rounded-xl border-white/20 bg-slate-900/60 text-slate-100 shadow-inner backdrop-blur-sm">
+                    <SelectTrigger className="h-12 rounded-xl bg-slate-900/60">
                       <SelectValue placeholder="Escolha uma turma" />
                     </SelectTrigger>
-                    <SelectContent className="border-white/10 bg-slate-900 text-white">
-                      {orderedClassSchedules.map((classItem) => (
-                        <SelectItem key={classItem.name} className="rounded-lg focus:bg-amber-500 focus:text-white" value={classItem.name}>
-                          {classItem.name}
+                    <SelectContent className="bg-slate-900">
+                      {orderedClassSchedules.map((c) => (
+                        <SelectItem key={c.name} value={c.name}>
+                          {c.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setShowClassSection((prev) => !prev)}
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.2em] text-white hover:bg-white/15"
-                >
+                <Button onClick={() => setShowClassSection((p) => !p)} variant="secondary">
                   {showClassSection ? "Recolher" : "Expandir"}
                 </Button>
               </div>
@@ -545,20 +417,13 @@ const Index = () => {
                 classColorMap={classColorMap}
                 onLessonClick={handleClassLessonClick}
                 activeKey={activeKeyGroup}
-                getLessonKey={(l) => getSubjectCode(l.className)}
-                showTeacher={true}
+                getLessonKey={(lesson) => getSubjectCode(lesson.className)}
+                showTeacher
                 highlightColor="#f59e0b"
-                visibleShift={
-                  /\b(AM|BM)\b/.test(currentClassSchedule.name)
-                    ? "morning"
-                    : /\b(AV|BV)\b/.test(currentClassSchedule.name)
-                      ? "afternoon"
-                      : "both"
-                }
               />
             )}
           </div>
-        </section>
+        </div>
       </div>
     </main>
   );
