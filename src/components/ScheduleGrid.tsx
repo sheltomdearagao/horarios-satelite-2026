@@ -43,13 +43,13 @@ const LessonCard = ({
     onClick={onClick}
     aria-pressed={isActive}
     className={cn(
-      "relative flex w-full items-start gap-3 rounded-2xl border bg-white px-3 py-2 md:px-4 md:py-3 text-left transition-all duration-300",
-      "hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
-      isActive ? "scale-[1.02] z-10 border-2" : "border-slate-100 shadow-sm"
+      "relative flex w-full items-start gap-3 rounded-2xl border bg-slate-900/65 p-3 md:p-4 text-left transition-all duration-200",
+      "hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
+      isActive ? "scale-[1.02] z-10 border-2" : "border-white/10"
     )}
     style={{
       borderColor: isActive ? highlightColor : undefined,
-      boxShadow: isActive ? `0 20px 40px ${hexToRgba(highlightColor, 0.25)}` : undefined,
+      boxShadow: isActive ? `0 18px 36px ${hexToRgba(highlightColor, 0.18)}` : undefined,
     }}
   >
     <span
@@ -59,23 +59,23 @@ const LessonCard = ({
       }}
     />
     <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-      <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
-        <span className={cn(isActive && "font-black")} style={{ color: isActive ? highlightColor : undefined }}>
+      <div className="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-wider text-white/60">
+        <span className={cn(isActive && "font-black", "truncate")} style={{ color: isActive ? highlightColor : undefined }}>
           {lesson.periodLabel}
         </span>
-        <span className="text-[0.55rem] text-slate-400">
+        <span className="text-[0.65rem] text-white/50">
           {lesson.shift === "morning" ? "MANHÃ" : "TARDE"}
         </span>
       </div>
-      <p className="text-sm md:text-base font-bold leading-tight text-slate-900 truncate">{lesson.className}</p>
-      <div className="flex items-center justify-between text-[0.7rem] text-slate-500">
-        <span className="font-medium uppercase tracking-[0.25em]">{lesson.time}</span>
+
+      <p className="text-sm md:text-base font-extrabold leading-tight text-white truncate">{lesson.className}</p>
+
+      <div className="flex items-center justify-between text-[0.75rem] text-white/60">
+        <span className="font-medium uppercase tracking-[0.18em]">{lesson.time}</span>
+        {showTeacher ? (
+          <span className="ml-3 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/70 truncate">Prof(a). {lesson.teacher}</span>
+        ) : null}
       </div>
-      {showTeacher && (
-        <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-slate-600 truncate">
-          Prof(a). {lesson.teacher}
-        </p>
-      )}
     </div>
   </button>
 );
@@ -87,16 +87,16 @@ const EmptySlotCard = ({
   slotInfo: { label: string; time: string };
   shift: "morning" | "afternoon";
 }) => (
-  <div className="relative flex w-full items-start gap-3 rounded-2xl border border-slate-50 bg-white/40 px-3 py-2 md:px-4 md:py-3 text-left shadow-sm opacity-50">
-    <span className="mt-0.5 h-9 w-1.5 rounded-full shrink-0 md:h-10 bg-slate-200" />
+  <div className="relative flex w-full items-start gap-3 rounded-2xl border border-white/6 bg-slate-800/40 p-3 md:p-4 text-left shadow-sm">
+    <span className="mt-0.5 h-9 w-1.5 rounded-full shrink-0 md:h-10 bg-slate-600" />
     <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-      <div className="flex items-center justify-between text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">
-        <span>{slotInfo.label}</span>
-        <span className="text-[0.55rem]">{shift === "morning" ? "MANHÃ" : "TARDE"}</span>
+      <div className="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-wider text-white/50">
+        <span className="truncate">{slotInfo.label}</span>
+        <span className="text-[0.65rem]">{shift === "morning" ? "MANHÃ" : "TARDE"}</span>
       </div>
-      <p className="text-sm md:text-base font-bold leading-tight text-slate-300">Sem aula</p>
-      <div className="text-[0.7rem] text-slate-300">
-        <span className="font-medium uppercase tracking-[0.25em]">{slotInfo.time}</span>
+      <p className="text-sm md:text-base font-bold leading-tight text-white/40 truncate">Sem aula</p>
+      <div className="text-[0.75rem] text-white/40">
+        <span className="font-medium uppercase tracking-[0.18em]">{slotInfo.time}</span>
       </div>
     </div>
   </div>
@@ -112,7 +112,7 @@ export const ScheduleGrid = ({
   getLessonKey,
   visibleShift = "both",
 }: ScheduleGridProps) => (
-  <div className="-mx-4 overflow-x-auto pb-4 scrollbar-hide">
+  <div className="-mx-4 overflow-x-auto pb-4 no-scrollbar">
     <div className="flex w-max gap-4 snap-x snap-mandatory px-4">
       {days.map((day) => {
         const dayLessons = scheduleByDay[day];
@@ -123,19 +123,21 @@ export const ScheduleGrid = ({
             className="flex-shrink-0 snap-start rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl"
             style={{
               width: "84vw",
-              maxWidth: 400,
+              maxWidth: 420,
             }}
           >
-            <header className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
-              <h3 className="text-base md:text-lg font-bold uppercase tracking-widest text-white">{day}</h3>
-              <span className="text-[0.65rem] font-bold text-white/40 uppercase tracking-widest">Grade Completa</span>
+            <header className="mb-4 flex items-start justify-between border-b border-white/6 pb-3">
+              <div>
+                <h3 className="text-lg md:text-xl font-extrabold uppercase tracking-widest text-white">{day}</h3>
+                <div className="mt-1 text-xs text-white/50 uppercase">Grade Completa</div>
+              </div>
             </header>
 
             <div className="flex flex-col gap-8">
               {/* Morning Shift */}
               {visibleShift !== "afternoon" && (
                 <div className="space-y-3">
-                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-emerald-400/80">Manhã</p>
+                  <p className="text-[0.72rem] font-black uppercase tracking-[0.28em] text-emerald-400/85">Manhã</p>
                   <div className="flex flex-col gap-3">
                     {morningSlots.map((slotInfo, index) => {
                       const lesson = dayLessons.morning.find((l) => l.slot === index);
@@ -163,7 +165,7 @@ export const ScheduleGrid = ({
               {/* Afternoon Shift */}
               {visibleShift !== "morning" && (
                 <div className="space-y-3">
-                  <p className="text-[0.65rem] font-black uppercase tracking-[0.3em] text-amber-400/80">Tarde</p>
+                  <p className="text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-400/85">Tarde</p>
                   <div className="flex flex-col gap-3">
                     {afternoonSlots.map((slotInfo, index) => {
                       const lesson = dayLessons.afternoon.find((l) => l.slot === index);
