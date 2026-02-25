@@ -86,15 +86,13 @@ const Index: React.FC = () => {
     return acc;
   }, {} as Record<DayName, number>);
 
-  // Compute the exact next occurrence date for a lesson (the next calendar date when that lesson happens, considering weekly recurrence)
   const computeNextOccurrence = (lesson: Lesson, referenceDate: Date) => {
-    const targetWeekday = dayNameToWeekdayIndex(lesson.day); // 1..5
+    const targetWeekday = dayNameToWeekdayIndex(lesson.day);
     const ref = new Date(referenceDate);
 
-    const currentWeekday = ref.getDay(); // 0..6
-    let delta = (targetWeekday - currentWeekday + 7) % 7; // days ahead
+    const currentWeekday = ref.getDay();
+    let delta = (targetWeekday - currentWeekday + 7) % 7;
 
-    // parse lesson start time
     const [start] = lesson.time.split("–").map((s) => s.trim());
     const [hStr, mStr] = start.split(":").map((s) => s.trim());
     const h = Number(hStr) || 0;
@@ -104,7 +102,6 @@ const Index: React.FC = () => {
     candidate.setHours(h, m, 0, 0);
     candidate.setDate(ref.getDate() + delta);
 
-    // If the candidate is in the past relative to referenceDate, move to next week's occurrence
     if (candidate.getTime() < referenceDate.getTime()) {
       candidate.setDate(candidate.getDate() + 7);
     }
@@ -112,7 +109,6 @@ const Index: React.FC = () => {
     return candidate;
   };
 
-  // Returns the next lesson and the exact date it will occur (based on reference now)
   const findNextLessonWithDate = (lessons: Lesson[]) => {
     if (!lessons || lessons.length === 0) return null;
     const reference = new Date();
@@ -127,7 +123,6 @@ const Index: React.FC = () => {
       }
     }
 
-    // If nothing was found (shouldn't happen), fallback to first lesson occurrence (next week)
     if (!best) {
       const lesson = lessons[0];
       const occ = computeNextOccurrence(lesson, reference);
@@ -200,7 +195,7 @@ const Index: React.FC = () => {
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Calendário</DialogTitle>
             <p className="text-sm text-white/70">Visual do mês atual</p>
           </DialogHeader>
-          <div className="no-scrollbar flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
+          <div className="flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
             <CalendarPreview
               monthDate={new Date(selectedCalendarDate.getFullYear(), selectedCalendarDate.getMonth(), 1)}
               selectedDate={selectedCalendarDate}
@@ -262,8 +257,11 @@ const Index: React.FC = () => {
             </div>
           </div>
 
-          <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-safe pt-4 sm:px-6">
-            <div className="space-y-4">
+          <div
+            className="flex-1 overflow-y-auto px-5 pb-safe pt-4 sm:px-6"
+            style={{ maxHeight: "70vh" }}
+          >
+            <div className="space-y-4 pb-2">
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase text-white/60">Próxima aula</p>
                 {nextLessonWithDate ? (
@@ -283,7 +281,14 @@ const Index: React.FC = () => {
                         {nextLessonWithDate.lesson.periodLabel}
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-white/70">{nextLessonWithDate.lesson.time} • {new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' }).format(nextLessonWithDate.date)}</div>
+                    <div className="mt-2 text-sm text-white/70">
+                      {nextLessonWithDate.lesson.time} •{" "}
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        weekday: "long",
+                        day: "2-digit",
+                        month: "2-digit",
+                      }).format(nextLessonWithDate.date)}
+                    </div>
                   </div>
                 ) : (
                   <div className="mt-2 text-sm text-white/70">Sem próxima aula encontrada.</div>
