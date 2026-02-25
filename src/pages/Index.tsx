@@ -22,6 +22,15 @@ const weekdayIndexToDayName = (weekdayIndex: number): DayName | null => {
   return null;
 };
 
+const dayNameToWeekdayIndex = (day: DayName) => {
+  if (day === "Segunda") return 1;
+  if (day === "Terça") return 2;
+  if (day === "Quarta") return 3;
+  if (day === "Quinta") return 4;
+  if (day === "Sexta") return 5;
+  return 1;
+};
+
 type ModalType = "calendar" | "today" | null;
 
 const formatShortDateForButton = (d: Date) => {
@@ -77,26 +86,59 @@ const Index: React.FC = () => {
     return acc;
   }, {} as Record<DayName, number>);
 
-  const findNextLesson = (lessons: Lesson[]) => {
+  // Compute the exact next occurrence date for a lesson (the next calendar date when that lesson happens, considering weekly recurrence)
+  const computeNextOccurrence = (lesson: Lesson, referenceDate: Date) => {
+    const targetWeekday = dayNameToWeekdayIndex(lesson.day); // 1..5
+    const ref = new Date(referenceDate);
+
+    const currentWeekday = ref.getDay(); // 0..6
+    let delta = (targetWeekday - currentWeekday + 7) % 7; // days ahead
+
+    // parse lesson start time
+    const [start] = lesson.time.split("–").map((s) => s.trim());
+    const [hStr, mStr] = start.split(":").map((s) => s.trim());
+    const h = Number(hStr) || 0;
+    const m = Number(mStr) || 0;
+
+    const candidate = new Date(ref);
+    candidate.setHours(h, m, 0, 0);
+    candidate.setDate(ref.getDate() + delta);
+
+    // If the candidate is in the past relative to referenceDate, move to next week's occurrence
+    if (candidate.getTime() < referenceDate.getTime()) {
+      candidate.setDate(candidate.getDate() + 7);
+    }
+
+    return candidate;
+  };
+
+  // Returns the next lesson and the exact date it will occur (based on reference now)
+  const findNextLessonWithDate = (lessons: Lesson[]) => {
     if (!lessons || lessons.length === 0) return null;
-    const currentDayIndex = todayName ? dayOrder[todayName] : -1;
+    const reference = new Date();
+    let best: { lesson: Lesson; date: Date } | null = null;
+
     for (const lesson of lessons) {
-      const lessonDayIndex = dayOrder[lesson.day];
-      if (lessonDayIndex < currentDayIndex) continue;
-      if (lessonDayIndex === currentDayIndex) {
-        const [start] = lesson.time.split("–").map((s) => s.trim());
-        const [h, m] = start.split(":").map(Number);
-        const minutes = (h || 0) * 60 + (m || 0);
-        if (minutes >= minutesNow) return lesson;
-      } else {
-        return lesson;
+      const occ = computeNextOccurrence(lesson, reference);
+      if (occ.getTime() >= reference.getTime()) {
+        if (!best || occ.getTime() < best.date.getTime()) {
+          best = { lesson, date: occ };
+        }
       }
     }
-    return lessons[0] ?? null;
+
+    // If nothing was found (shouldn't happen), fallback to first lesson occurrence (next week)
+    if (!best) {
+      const lesson = lessons[0];
+      const occ = computeNextOccurrence(lesson, reference);
+      best = { lesson, date: occ };
+    }
+
+    return best;
   };
 
   const baseLessons = todayMode === "teacher" ? (todayTeacherSchedule?.lessons ?? []) : (todayClassSchedule?.lessons ?? []);
-  const nextLesson = useMemo(() => findNextLesson(baseLessons), [baseLessons, minutesNow, todayMode, todayTeacher, todayClass]);
+  const nextLessonWithDate = useMemo(() => findNextLessonWithDate(baseLessons), [baseLessons, todayMode, todayTeacher, todayClass]);
 
   const openModal = useCallback((modal: Exclude<ModalType, null>) => {
     if (typeof window === "undefined") return;
@@ -224,24 +266,24 @@ const Index: React.FC = () => {
             <div className="space-y-4">
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase text-white/60">Próxima aula</p>
-                {nextLesson ? (
+                {nextLessonWithDate ? (
                   <div className="mt-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div
                           className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: classColorMap.get(nextLesson.classGroup) ?? "#A855F7" }}
+                          style={{ backgroundColor: classColorMap.get(nextLessonWithDate.lesson.classGroup) ?? "#A855F7" }}
                         />
-                        <div className="font-black text-white">{nextLesson.className}</div>
+                        <div className="font-black text-white">{nextLessonWithDate.lesson.className}</div>
                       </div>
                       <div
                         className="text-xs font-bold px-3 py-1 rounded-full text-white/80"
                         style={{ backgroundColor: "#ffffff12" }}
                       >
-                        {nextLesson.periodLabel}
+                        {nextLessonWithDate.lesson.periodLabel}
                       </div>
                     </div>
-                    <div className="mt-2 text-sm text-white/70">{nextLesson.time}</div>
+                    <div className="mt-2 text-sm text-white/70">{nextLessonWithDate.lesson.time} • {new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' }).format(nextLessonWithDate.date)}</div>
                   </div>
                 ) : (
                   <div className="mt-2 text-sm text-white/70">Sem próxima aula encontrada.</div>
