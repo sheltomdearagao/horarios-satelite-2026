@@ -5,8 +5,9 @@ import { classSchedules, classColorMap, teacherSchedules, days } from "@/data/sc
 import type { Lesson, DayName } from "@/data/schedule";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Clock, LayoutGrid } from "lucide-react";
 import { CalendarPreview } from "@/components/CalendarPreview";
+import { OverviewCarousel } from "@/components/OverviewCarousel";
 
 const getSubjectCode = (lessonName: string) => {
   const segments = lessonName.split("-").map((s) => s.trim());
@@ -31,7 +32,7 @@ const dayNameToWeekdayIndex = (day: DayName) => {
   return 1;
 };
 
-type ModalType = "calendar" | "today" | null;
+type ModalType = "calendar" | "today" | "overview" | null;
 
 const formatShortDateForButton = (d: Date) => {
   const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(d).toUpperCase();
@@ -58,7 +59,6 @@ const Index: React.FC = () => {
   const weekdayIndex = now.getDay();
   const todayName = weekdayIndexToDayName(weekdayIndex);
   const todayLabelFull = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(now);
-  const minutesNow = now.getHours() * 60 + now.getMinutes();
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date>(now);
 
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((t) => [t.name, t])), []);
@@ -80,60 +80,6 @@ const Index: React.FC = () => {
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
   const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
   const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
-
-  const dayOrder = days.reduce<Record<DayName, number>>((acc, d, idx) => {
-    acc[d] = idx;
-    return acc;
-  }, {} as Record<DayName, number>);
-
-  const computeNextOccurrence = (lesson: Lesson, referenceDate: Date) => {
-    const targetWeekday = dayNameToWeekdayIndex(lesson.day);
-    const ref = new Date(referenceDate);
-
-    const currentWeekday = ref.getDay();
-    let delta = (targetWeekday - currentWeekday + 7) % 7;
-
-    const [start] = lesson.time.split("–").map((s) => s.trim());
-    const [hStr, mStr] = start.split(":").map((s) => s.trim());
-    const h = Number(hStr) || 0;
-    const m = Number(mStr) || 0;
-
-    const candidate = new Date(ref);
-    candidate.setHours(h, m, 0, 0);
-    candidate.setDate(ref.getDate() + delta);
-
-    if (candidate.getTime() < referenceDate.getTime()) {
-      candidate.setDate(candidate.getDate() + 7);
-    }
-
-    return candidate;
-  };
-
-  const findNextLessonWithDate = (lessons: Lesson[]) => {
-    if (!lessons || lessons.length === 0) return null;
-    const reference = new Date();
-    let best: { lesson: Lesson; date: Date } | null = null;
-
-    for (const lesson of lessons) {
-      const occ = computeNextOccurrence(lesson, reference);
-      if (occ.getTime() >= reference.getTime()) {
-        if (!best || occ.getTime() < best.date.getTime()) {
-          best = { lesson, date: occ };
-        }
-      }
-    }
-
-    if (!best) {
-      const lesson = lessons[0];
-      const occ = computeNextOccurrence(lesson, reference);
-      best = { lesson, date: occ };
-    }
-
-    return best;
-  };
-
-  const baseLessons = todayMode === "teacher" ? (todayTeacherSchedule?.lessons ?? []) : (todayClassSchedule?.lessons ?? []);
-  const nextLessonWithDate = useMemo(() => findNextLessonWithDate(baseLessons), [baseLessons, todayMode, todayTeacher, todayClass]);
 
   const openModal = useCallback((modal: Exclude<ModalType, null>) => {
     if (typeof window === "undefined") return;
@@ -178,6 +124,56 @@ const Index: React.FC = () => {
     const key = getSubjectCode(lesson.className);
     setActiveKeyGroup((cur) => (cur === key ? null : key));
   };
+
+  const computeNextOccurrence = (lesson: Lesson, referenceDate: Date) => {
+    const targetWeekday = dayNameToWeekdayIndex(lesson.day);
+    const ref = new Date(referenceDate);
+    const currentWeekday = ref.getDay();
+    let delta = (targetWeekday - currentWeekday + 7) % 7;
+
+    const [start] = lesson.time.split("–").map((s) => s.trim());
+    const [hStr, mStr] = start.split(":").map((s) => s.trim());
+    const h = Number(hStr) || 0;
+    const m = Number(mStr) || 0;
+
+    const candidate = new Date(ref);
+    candidate.setHours(h, m, 0, 0);
+    candidate.setDate(ref.getDate() + delta);
+
+    if (candidate.getTime() < referenceDate.getTime()) {
+      candidate.setDate(candidate.getDate() + 7);
+    }
+
+    return candidate;
+  };
+
+  const findNextLessonWithDate = (lessons: Lesson[]) => {
+    if (!lessons || lessons.length === 0) return null;
+    const reference = new Date();
+    let best: { lesson: Lesson; date: Date } | null = null;
+
+    for (const lesson of lessons) {
+      const occ = computeNextOccurrence(lesson, reference);
+      if (occ.getTime() >= reference.getTime()) {
+        if (!best || occ.getTime() < best.date.getTime()) {
+          best = { lesson, date: occ };
+        }
+      }
+    }
+
+    if (!best) {
+      const lesson = lessons[0];
+      const occ = computeNextOccurrence(lesson, reference);
+      best = { lesson, date: occ };
+    }
+
+    return best;
+  };
+
+  const nextLessonWithDate = useMemo(() => {
+    const baseLessons = todayMode === "teacher" ? (todayTeacherSchedule?.lessons ?? []) : (todayClassSchedule?.lessons ?? []);
+    return findNextLessonWithDate(baseLessons);
+  }, [todayClassSchedule?.lessons, todayMode, todayTeacherSchedule?.lessons]);
 
   const todayLessons = useMemo(() => {
     if (!todayName) return [];
@@ -257,10 +253,7 @@ const Index: React.FC = () => {
             </div>
           </div>
 
-          <div
-            className="flex-1 overflow-y-auto px-5 pb-safe pt-4 sm:px-6"
-            style={{ maxHeight: "70vh" }}
-          >
+          <div className="flex-1 overflow-y-auto px-5 pb-safe pt-4 sm:px-6" style={{ maxHeight: "70vh" }}>
             <div className="space-y-4 pb-2">
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase text-white/60">Próxima aula</p>
@@ -274,10 +267,7 @@ const Index: React.FC = () => {
                         />
                         <div className="font-black text-white">{nextLessonWithDate.lesson.className}</div>
                       </div>
-                      <div
-                        className="text-xs font-bold px-3 py-1 rounded-full text-white/80"
-                        style={{ backgroundColor: "#ffffff12" }}
-                      >
+                      <div className="rounded-full px-3 py-1 text-xs font-bold text-white/80" style={{ backgroundColor: "#ffffff12" }}>
                         {nextLessonWithDate.lesson.periodLabel}
                       </div>
                     </div>
@@ -310,7 +300,7 @@ const Index: React.FC = () => {
                   {todayLessons.map((lesson) => (
                     <div key={lesson.id}>
                       <div className="mb-2 flex items-center justify-between">
-                        <div className="text-xs text-white/60 font-bold uppercase">{lesson.periodLabel}</div>
+                        <div className="text-xs font-bold uppercase text-white/60">{lesson.periodLabel}</div>
                         <div className="text-xs text-white/60">{lesson.time}</div>
                       </div>
                       <div className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-3">
@@ -322,9 +312,7 @@ const Index: React.FC = () => {
                             />
                             <div className="font-bold text-white">{lesson.className}</div>
                           </div>
-                          <div className="text-xs text-white/70 uppercase">
-                            {lesson.shift === "morning" ? "Manhã" : "Tarde"}
-                          </div>
+                          <div className="text-xs uppercase text-white/70">{lesson.shift === "morning" ? "Manhã" : "Tarde"}</div>
                         </div>
                         <div className="mt-2 text-sm text-white/70">
                           {lesson.teacher} • {lesson.classGroup}
@@ -335,6 +323,20 @@ const Index: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeModal === "overview") {
+      return (
+        <div className="flex h-full flex-col overflow-hidden">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Visão Geral</DialogTitle>
+            <p className="text-sm text-white/70">Deslize entre manhã e tarde em alta resolução.</p>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
+            <OverviewCarousel />
           </div>
         </div>
       );
@@ -357,7 +359,7 @@ const Index: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Button onClick={() => openModal("calendar")} className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10">
               <span className="flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-emerald-300" />
@@ -372,6 +374,14 @@ const Index: React.FC = () => {
                 <span className="font-black uppercase tracking-[0.18em]">Aulas de hoje</span>
               </span>
               <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
+            </Button>
+
+            <Button onClick={() => openModal("overview")} className="h-12 w-full justify-between rounded-2xl bg-sky-500/10 px-4 text-white hover:bg-sky-500/15">
+              <span className="flex items-center gap-2">
+                <LayoutGrid className="h-4 w-4 text-sky-300" />
+                <span className="font-black uppercase tracking-[0.18em]">Visão Geral</span>
+              </span>
+              <span className="text-xs font-semibold text-white/70">Manhã / Tarde</span>
             </Button>
           </div>
         </header>
