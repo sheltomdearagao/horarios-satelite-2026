@@ -130,7 +130,6 @@ const parseMatrixCsv = (csv: string, forceShift?: Shift) => {
   const delimiter = detectDelimiter(lines[0]);
   const headers = lines[0].split(delimiter).map(normalizeCell);
 
-  // Dia;Horário;Turma1;Turma2...
   const headerClassGroups = headers
     .slice(2)
     .map((h) => normalizeClassGroup(h))
@@ -229,7 +228,6 @@ const parsedB = parseMatrixCsv(matrixBRaw as string, "afternoon");
 
 const allLessons = [...parsedA.lessons, ...parsedB.lessons];
 
-// class order: (A headers) + (B headers) + (any group found in lessons)
 const classGroups: string[] = [];
 const seen = new Set<string>();
 
@@ -251,7 +249,6 @@ allLessons.forEach((l) => {
   classGroups.push(key);
 });
 
-// class schedules
 const classLessonBuckets = new Map<string, Lesson[]>();
 allLessons.forEach((lesson) => {
   const key = normalizeClassGroup(lesson.classGroup);
@@ -270,7 +267,6 @@ const classSchedules: ClassSchedule[] = classGroups.map((groupName) => {
   };
 });
 
-// teacher schedules
 const teacherMap = new Map<string, Lesson[]>();
 allLessons.forEach((lesson) => {
   const bucket = teacherMap.get(lesson.teacher) ?? [];
