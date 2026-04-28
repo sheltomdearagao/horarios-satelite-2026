@@ -372,10 +372,7 @@ const Index: React.FC = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Button
-              onClick={() => openModal("calendar")}
-              className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10"
-            >
+            <Button onClick={() => openModal("calendar")} className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10">
               <span className="flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-emerald-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Calendário</span>
@@ -383,10 +380,7 @@ const Index: React.FC = () => {
               <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
             </Button>
 
-            <Button
-              onClick={() => openModal("today")}
-              className="h-12 w-full justify-between rounded-2xl bg-emerald-500/10 px-4 text-white hover:bg-emerald-500/15"
-            >
+            <Button onClick={() => openModal("today")} className="h-12 w-full justify-between rounded-2xl bg-emerald-500/10 px-4 text-white hover:bg-emerald-500/15">
               <span className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-emerald-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Aulas de hoje</span>
@@ -394,10 +388,7 @@ const Index: React.FC = () => {
               <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
             </Button>
 
-            <Button
-              onClick={() => openModal("overview")}
-              className="h-12 w-full justify-between rounded-2xl bg-sky-500/10 px-4 text-white hover:bg-sky-500/15"
-            >
+            <Button onClick={() => openModal("overview")} className="h-12 w-full justify-between rounded-2xl bg-sky-500/10 px-4 text-white hover:bg-sky-500/15">
               <span className="flex items-center gap-2">
                 <LayoutGrid className="h-4 w-4 text-sky-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Visão Geral</span>
@@ -416,25 +407,46 @@ const Index: React.FC = () => {
         </Dialog>
 
         <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
-          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.5)] sm:p-5">
+            <div className="mb-4 flex items-center justify-between">
               <div>
-                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Docente</div>
-                <div className="text-2xl font-black text-white">{selectedTeacher || "Selecione um professor"}</div>
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/40">Modo de visualização</p>
+                <p className="mt-1 text-lg font-semibold text-white/90">
+                  {todayMode === "teacher" ? "Professor" : "Turma"}
+                </p>
               </div>
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
-                <div className="w-full sm:w-64">
-                  <Select
-                    value={selectedTeacher}
-                    onValueChange={(v) => {
-                      setSelectedTeacher(v);
-                      setShowTeacherSection(true);
-                    }}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-slate-900/60">
-                      <SelectValue placeholder="Escolha um professor" />
+
+              <div className="flex rounded-full border border-white/10 bg-slate-900/60 p-1">
+                <button
+                  type="button"
+                  onClick={() => setTodayMode("teacher")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] transition ${
+                    todayMode === "teacher" ? "bg-emerald-500/20 text-white" : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  Professor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTodayMode("class")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] transition ${
+                    todayMode === "class" ? "bg-amber-500/20 text-white" : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  Turma
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="w-full sm:max-w-md">
+                <p className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/40">Seleção</p>
+                {todayMode === "teacher" ? (
+                  <Select value={selectedTeacher} onValueChange={(v) => { setSelectedTeacher(v); setShowTeacherSection(true); }}>
+                    <SelectTrigger className="h-11 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
+                      <SelectValue placeholder="Escolha" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900">
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
                       {teacherSchedules.map((t) => (
                         <SelectItem key={t.name} value={t.name}>
                           {t.name}
@@ -442,10 +454,39 @@ const Index: React.FC = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <Button onClick={() => setShowTeacherSection((p) => !p)} variant="secondary">
-                  {showTeacherSection ? "Recolher" : "Ver horários"}
-                </Button>
+                ) : (
+                  <Select value={selectedClass} onValueChange={(v) => { setSelectedClass(v); setShowClassSection(true); }}>
+                    <SelectTrigger className="h-11 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
+                      <SelectValue placeholder="Escolha" />
+                    </SelectTrigger>
+                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                      {orderedClassSchedules.map((c) => (
+                        <SelectItem key={c.name} value={c.name}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              <Button
+                onClick={() => {
+                  if (todayMode === "teacher") setShowTeacherSection((p) => !p);
+                  else setShowClassSection((p) => !p);
+                }}
+                className="h-11 rounded-full bg-white/10 px-4 text-xs font-black uppercase tracking-[0.22em] text-white hover:bg-white/15"
+              >
+                Ver horários
+              </Button>
+            </div>
+          </div>
+
+          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Docente</div>
+                <div className="text-2xl font-black text-white">{selectedTeacher || "—"}</div>
               </div>
             </div>
 
@@ -461,35 +502,10 @@ const Index: React.FC = () => {
           </div>
 
           <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="space-y-1">
                 <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Turma</div>
-                <div className="text-2xl font-black text-white">{selectedClass || "Selecione uma turma"}</div>
-              </div>
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
-                <div className="w-full sm:w-64">
-                  <Select
-                    value={selectedClass}
-                    onValueChange={(v) => {
-                      setSelectedClass(v);
-                      setShowClassSection(true);
-                    }}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-slate-900/60">
-                      <SelectValue placeholder="Escolha uma turma" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-slate-900">
-                      {orderedClassSchedules.map((c) => (
-                        <SelectItem key={c.name} value={c.name}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={() => setShowClassSection((p) => !p)} variant="secondary">
-                  {showClassSection ? "Recolher" : "Ver horários"}
-                </Button>
+                <div className="text-2xl font-black text-white">{selectedClass || "—"}</div>
               </div>
             </div>
 
