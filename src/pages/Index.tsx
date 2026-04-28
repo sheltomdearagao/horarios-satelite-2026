@@ -46,6 +46,7 @@ const Index: React.FC = () => {
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [activeKeyTeacher, setActiveKeyTeacher] = useState<string | null>(null);
   const [activeKeyGroup, setActiveKeyGroup] = useState<string | null>(null);
+
   const [showTeacherSection, setShowTeacherSection] = useState(false);
   const [showClassSection, setShowClassSection] = useState(false);
 
@@ -58,7 +59,6 @@ const Index: React.FC = () => {
   const now = new Date();
   const weekdayIndex = now.getDay();
   const todayName = weekdayIndexToDayName(weekdayIndex);
-  const todayLabelFull = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(now);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date>(now);
 
   const teacherMap = useMemo(() => new Map(teacherSchedules.map((t) => [t.name, t])), []);
@@ -78,8 +78,10 @@ const Index: React.FC = () => {
 
   const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
-  const todayTeacherSchedule = teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
-  const todayClassSchedule = classMap.get(todayClass) ?? classSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
+  const todayTeacherSchedule =
+    teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
+  const todayClassSchedule =
+    classMap.get(todayClass) ?? classSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
 
   const openModal = useCallback((modal: Exclude<ModalType, null>) => {
     if (typeof window === "undefined") return;
@@ -129,7 +131,7 @@ const Index: React.FC = () => {
     const targetWeekday = dayNameToWeekdayIndex(lesson.day);
     const ref = new Date(referenceDate);
     const currentWeekday = ref.getDay();
-    let delta = (targetWeekday - currentWeekday + 7) % 7;
+    const delta = (targetWeekday - currentWeekday + 7) % 7;
 
     const [start] = lesson.time.split("–").map((s) => s.trim());
     const [hStr, mStr] = start.split(":").map((s) => s.trim());
@@ -171,14 +173,14 @@ const Index: React.FC = () => {
   };
 
   const nextLessonWithDate = useMemo(() => {
-    const baseLessons = todayMode === "teacher" ? (todayTeacherSchedule?.lessons ?? []) : (todayClassSchedule?.lessons ?? []);
+    const baseLessons =
+      todayMode === "teacher" ? todayTeacherSchedule?.lessons ?? [] : todayClassSchedule?.lessons ?? [];
     return findNextLessonWithDate(baseLessons);
   }, [todayClassSchedule?.lessons, todayMode, todayTeacherSchedule?.lessons]);
 
   const todayLessons = useMemo(() => {
     if (!todayName) return [];
     const scheduleByDay = todayMode === "teacher" ? todayTeacherSchedule.scheduleByDay : todayClassSchedule.scheduleByDay;
-    if (!scheduleByDay) return [];
     const dayBucket = scheduleByDay[todayName];
     return [...(dayBucket?.morning ?? []), ...(dayBucket?.afternoon ?? [])];
   }, [todayClassSchedule?.scheduleByDay, todayMode, todayName, todayTeacherSchedule?.scheduleByDay]);
@@ -212,19 +214,29 @@ const Index: React.FC = () => {
 
           <div className="px-6 pt-4 pb-3 bg-slate-950/80 z-10">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="flex gap-3">
-                <Button onClick={() => setTodayMode("teacher")} className={`h-11 rounded-2xl ${todayMode === "teacher" ? "bg-emerald-500/20" : "bg-white/5"}`}>
-                  Por professor
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setTodayMode("teacher")}
+                  className={`h-10 rounded-2xl px-4 text-xs font-black uppercase tracking-[0.18em] ${
+                    todayMode === "teacher" ? "bg-emerald-500/20" : "bg-white/5"
+                  }`}
+                >
+                  Professor
                 </Button>
-                <Button onClick={() => setTodayMode("class")} className={`h-11 rounded-2xl ${todayMode === "class" ? "bg-amber-500/20" : "bg-white/5"}`}>
-                  Por turma
+                <Button
+                  onClick={() => setTodayMode("class")}
+                  className={`h-10 rounded-2xl px-4 text-xs font-black uppercase tracking-[0.18em] ${
+                    todayMode === "class" ? "bg-amber-500/20" : "bg-white/5"
+                  }`}
+                >
+                  Turma
                 </Button>
               </div>
 
               <div className="flex items-center justify-end gap-3">
                 {todayMode === "teacher" ? (
                   <Select value={todayTeacher} onValueChange={(v) => setTodayTeacher(v)}>
-                    <SelectTrigger className="h-11 rounded-xl bg-slate-900/60">
+                    <SelectTrigger className="h-10 rounded-xl bg-slate-900/60 text-sm">
                       <SelectValue placeholder="Escolha um professor" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-900">
@@ -237,7 +249,7 @@ const Index: React.FC = () => {
                   </Select>
                 ) : (
                   <Select value={todayClass} onValueChange={(v) => setTodayClass(v)}>
-                    <SelectTrigger className="h-11 rounded-xl bg-slate-900/60">
+                    <SelectTrigger className="h-10 rounded-xl bg-slate-900/60 text-sm">
                       <SelectValue placeholder="Escolha uma turma" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-900">
@@ -360,7 +372,10 @@ const Index: React.FC = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <Button onClick={() => openModal("calendar")} className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10">
+            <Button
+              onClick={() => openModal("calendar")}
+              className="h-12 w-full justify-between rounded-2xl bg-white/5 px-4 text-white hover:bg-white/10"
+            >
               <span className="flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-emerald-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Calendário</span>
@@ -368,7 +383,10 @@ const Index: React.FC = () => {
               <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
             </Button>
 
-            <Button onClick={() => openModal("today")} className="h-12 w-full justify-between rounded-2xl bg-emerald-500/10 px-4 text-white hover:bg-emerald-500/15">
+            <Button
+              onClick={() => openModal("today")}
+              className="h-12 w-full justify-between rounded-2xl bg-emerald-500/10 px-4 text-white hover:bg-emerald-500/15"
+            >
               <span className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-emerald-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Aulas de hoje</span>
@@ -376,7 +394,10 @@ const Index: React.FC = () => {
               <span className="text-xs font-semibold text-white/70">{formatShortDateForButton(now)}</span>
             </Button>
 
-            <Button onClick={() => openModal("overview")} className="h-12 w-full justify-between rounded-2xl bg-sky-500/10 px-4 text-white hover:bg-sky-500/15">
+            <Button
+              onClick={() => openModal("overview")}
+              className="h-12 w-full justify-between rounded-2xl bg-sky-500/10 px-4 text-white hover:bg-sky-500/15"
+            >
               <span className="flex items-center gap-2">
                 <LayoutGrid className="h-4 w-4 text-sky-300" />
                 <span className="font-black uppercase tracking-[0.18em]">Visão Geral</span>
@@ -423,7 +444,7 @@ const Index: React.FC = () => {
                   </Select>
                 </div>
                 <Button onClick={() => setShowTeacherSection((p) => !p)} variant="secondary">
-                  {showTeacherSection ? "Recolher" : "Expandir"}
+                  {showTeacherSection ? "Recolher" : "Ver horários"}
                 </Button>
               </div>
             </div>
@@ -467,7 +488,7 @@ const Index: React.FC = () => {
                   </Select>
                 </div>
                 <Button onClick={() => setShowClassSection((p) => !p)} variant="secondary">
-                  {showClassSection ? "Recolher" : "Expandir"}
+                  {showClassSection ? "Recolher" : "Ver horários"}
                 </Button>
               </div>
             </div>
