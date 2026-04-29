@@ -90,7 +90,7 @@ export const OverviewCarousel = () => {
                 </div>
               </div>
 
-              <div className="relative flex h-[70vh] items-center justify-center overflow-hidden bg-slate-900">
+              <div className="relative flex h-[52vh] items-center justify-center overflow-hidden bg-slate-900 sm:h-[58vh] lg:h-[60vh]">
                 <TransformComponent
                   wrapperClass="!w-full !h-full"
                   contentClass="!w-full !h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
@@ -116,7 +116,7 @@ export const OverviewCarousel = () => {
                   key={slide.label}
                   type="button"
                   onClick={() => setActiveIndex(index)}
-                  aria-label={`Mostrar ${slide.label}`}
+                  aria-label={`Ir para ${slide.label}`}
                   className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.22em] transition ${
                     isActive
                       ? "bg-emerald-400 text-slate-950"
