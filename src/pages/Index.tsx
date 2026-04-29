@@ -347,7 +347,7 @@ const Index: React.FC = () => {
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Visão Geral</DialogTitle>
             <p className="text-sm text-white/70">Deslize entre manhã e tarde em alta resolução.</p>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
+          <div className="flex-1 overflow-hidden px-4 py-4 sm:px-6 sm:py-6">
             <OverviewCarousel />
           </div>
         </div>
@@ -400,7 +400,7 @@ const Index: React.FC = () => {
 
         <Dialog open={Boolean(activeModal)} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
           {activeModal && (
-            <DialogContent className="max-h-[92vh] max-w-[96vw] rounded-[2rem] border border-white/10 bg-slate-950/95 p-0 text-white shadow-2xl backdrop-blur sm:max-w-2xl">
+            <DialogContent className="max-h-[92vh] max-w-[96vw] rounded-[2rem] border border-white/10 bg-slate-950/95 p-0 text-white shadow-2xl backdrop-blur sm:max-w-4xl">
               {renderModalBody()}
             </DialogContent>
           )}
@@ -478,28 +478,10 @@ const Index: React.FC = () => {
                 )}
               </div>
             </div>
-
-            <div className="mt-3 flex justify-center">
-              <Button
-                onClick={() => {
-                  if (todayMode === "teacher") setShowTeacherSection((p) => !p);
-                  else setShowClassSection((p) => !p);
-                }}
-                className="h-10 rounded-full bg-white/10 px-4 text-xs font-black uppercase tracking-[0.22em] text-white hover:bg-white/15"
-              >
-                Ver horários
-              </Button>
-            </div>
           </div>
 
           {showTeacherSection && currentTeacher && (
             <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="space-y-1">
-                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Docente</div>
-                  <div className="text-2xl font-black text-white">{selectedTeacher}</div>
-                </div>
-              </div>
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
@@ -512,12 +494,6 @@ const Index: React.FC = () => {
 
           {showClassSection && currentClassSchedule && (
             <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="space-y-1">
-                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Turma</div>
-                  <div className="text-2xl font-black text-white">{selectedClass}</div>
-                </div>
-              </div>
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
