@@ -408,7 +408,7 @@ const Index: React.FC = () => {
 
         <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.5)] sm:p-5">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-center">
               <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1">
                 <button
                   type="button"
@@ -429,7 +429,9 @@ const Index: React.FC = () => {
                   Turma
                 </button>
               </div>
+            </div>
 
+            <div className="mt-3 flex justify-center">
               <div className="w-full max-w-xs">
                 {todayMode === "teacher" ? (
                   <Select
@@ -475,7 +477,9 @@ const Index: React.FC = () => {
                   </Select>
                 )}
               </div>
+            </div>
 
+            <div className="mt-3 flex justify-center">
               <Button
                 onClick={() => {
                   if (todayMode === "teacher") setShowTeacherSection((p) => !p);
@@ -489,7 +493,7 @@ const Index: React.FC = () => {
           </div>
 
           {showTeacherSection && currentTeacher && (
-            <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+            <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="text-[0.65rem] font-bold uppercase text-white/40">Docente</div>
@@ -507,7 +511,7 @@ const Index: React.FC = () => {
           )}
 
           {showClassSection && currentClassSchedule && (
-            <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+            <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="text-[0.65rem] font-bold uppercase text-white/40">Turma</div>
