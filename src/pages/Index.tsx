@@ -408,15 +408,8 @@ const Index: React.FC = () => {
 
         <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.5)] sm:p-5">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/40">Modo de visualização</p>
-                <p className="mt-1 text-lg font-semibold text-white/90">
-                  {todayMode === "teacher" ? "Professor" : "Turma"}
-                </p>
-              </div>
-
-              <div className="flex rounded-full border border-white/10 bg-slate-900/60 p-1">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/60 p-1">
                 <button
                   type="button"
                   onClick={() => setTodayMode("teacher")}
@@ -436,14 +429,19 @@ const Index: React.FC = () => {
                   Turma
                 </button>
               </div>
-            </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div className="w-full sm:max-w-md">
-                <p className="mb-2 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-white/40">Seleção</p>
+              <div className="w-full max-w-xs">
                 {todayMode === "teacher" ? (
-                  <Select value={selectedTeacher} onValueChange={(v) => { setSelectedTeacher(v); setShowTeacherSection(true); }}>
-                    <SelectTrigger className="h-11 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
+                  <Select
+                    value={selectedTeacher}
+                    onValueChange={(v) => {
+                      setSelectedTeacher(v);
+                      setSelectedClass("");
+                      setShowTeacherSection(true);
+                      setShowClassSection(false);
+                    }}
+                  >
+                    <SelectTrigger className="h-10 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
                       <SelectValue placeholder="Escolha" />
                     </SelectTrigger>
                     <SelectContent className="border-white/10 bg-slate-900 text-white">
@@ -455,8 +453,16 @@ const Index: React.FC = () => {
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Select value={selectedClass} onValueChange={(v) => { setSelectedClass(v); setShowClassSection(true); }}>
-                    <SelectTrigger className="h-11 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
+                  <Select
+                    value={selectedClass}
+                    onValueChange={(v) => {
+                      setSelectedClass(v);
+                      setSelectedTeacher("");
+                      setShowClassSection(true);
+                      setShowTeacherSection(false);
+                    }}
+                  >
+                    <SelectTrigger className="h-10 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
                       <SelectValue placeholder="Escolha" />
                     </SelectTrigger>
                     <SelectContent className="border-white/10 bg-slate-900 text-white">
@@ -475,22 +481,21 @@ const Index: React.FC = () => {
                   if (todayMode === "teacher") setShowTeacherSection((p) => !p);
                   else setShowClassSection((p) => !p);
                 }}
-                className="h-11 rounded-full bg-white/10 px-4 text-xs font-black uppercase tracking-[0.22em] text-white hover:bg-white/15"
+                className="h-10 rounded-full bg-white/10 px-4 text-xs font-black uppercase tracking-[0.22em] text-white hover:bg-white/15"
               >
                 Ver horários
               </Button>
             </div>
           </div>
 
-          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Docente</div>
-                <div className="text-2xl font-black text-white">{selectedTeacher || "—"}</div>
+          {showTeacherSection && currentTeacher && (
+            <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Docente</div>
+                  <div className="text-2xl font-black text-white">{selectedTeacher}</div>
+                </div>
               </div>
-            </div>
-
-            {showTeacherSection && currentTeacher && (
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
@@ -498,18 +503,17 @@ const Index: React.FC = () => {
                 activeKey={activeKeyTeacher}
                 getLessonKey={(lesson) => `${getSubjectCode(lesson.className)}|${lesson.classGroup}`}
               />
-            )}
-          </div>
-
-          <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="text-[0.65rem] font-bold uppercase text-white/40">Visão por Turma</div>
-                <div className="text-2xl font-black text-white">{selectedClass || "—"}</div>
-              </div>
             </div>
+          )}
 
-            {showClassSection && currentClassSchedule && (
+          {showClassSection && currentClassSchedule && (
+            <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Turma</div>
+                  <div className="text-2xl font-black text-white">{selectedClass}</div>
+                </div>
+              </div>
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
@@ -519,8 +523,8 @@ const Index: React.FC = () => {
                 showTeacher
                 highlightColor="#f59e0b"
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
