@@ -78,6 +78,16 @@ const Index: React.FC = () => {
 
   const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
+  const selectedClassVisibleShift = useMemo(() => {
+    if (!selectedClass) return "both" as const;
+    const normalized = selectedClass.toUpperCase();
+    if (normalized.includes("1º") || normalized.includes("AI") || normalized.includes("BI") || normalized.includes("TEC")) {
+      return "both" as const;
+    }
+    if (normalized.includes("AM") || normalized.includes("BM")) return "morning" as const;
+    if (normalized.includes("AV") || normalized.includes("BV")) return "afternoon" as const;
+    return "both" as const;
+  }, [selectedClass]);
   const todayTeacherSchedule =
     teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
   const todayClassSchedule =
@@ -488,7 +498,9 @@ const Index: React.FC = () => {
                 onLessonClick={handleTeacherLessonClick}
                 activeKey={activeKeyTeacher}
                 getLessonKey={(lesson) => `${getSubjectCode(lesson.className)}|${lesson.classGroup}`}
+                visibleShift="both"
               />
+
             </div>
           )}
 
@@ -502,7 +514,9 @@ const Index: React.FC = () => {
                 getLessonKey={(lesson) => getSubjectCode(lesson.className)}
                 showTeacher
                 highlightColor="#f59e0b"
+                visibleShift={selectedClassVisibleShift}
               />
+
             </div>
           )}
         </div>
