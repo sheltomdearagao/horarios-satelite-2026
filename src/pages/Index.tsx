@@ -355,7 +355,6 @@ const Index: React.FC = () => {
         <div className="flex h-full flex-col overflow-hidden">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Visão Geral</DialogTitle>
-            <p className="text-sm text-white/70">Deslize entre manhã e tarde em alta resolução.</p>
           </DialogHeader>
           <div className="flex-1 overflow-hidden px-4 py-4 sm:px-6 sm:py-6">
             <OverviewCarousel />
