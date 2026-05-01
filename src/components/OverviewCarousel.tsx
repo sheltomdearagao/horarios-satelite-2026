@@ -130,8 +130,7 @@ export const OverviewCarousel = () => {
           </div>
 
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/45">
-            Toque duplo ou scroll para ampliar
-          </p>
+                      </p>
         </div>
       </div>
     </div>
