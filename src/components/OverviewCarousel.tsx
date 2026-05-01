@@ -55,7 +55,6 @@ export const OverviewCarousel = () => {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">Visão Geral</p>
                   <p className="mt-1 text-sm font-semibold text-white/85">
-                    Clique, arraste e use zoom na imagem.
                   </p>
                 </div>
 
