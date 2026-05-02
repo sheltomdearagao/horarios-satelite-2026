@@ -41,6 +41,9 @@ const formatShortDateForButton = (d: Date) => {
   return `${weekday} - ${day}/${month}`;
 };
 
+const dropdownContentClassName =
+  "border-white/10 bg-slate-900 text-white max-h-[45vh] overflow-y-auto shadow-2xl";
+
 const Index: React.FC = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedClass, setSelectedClass] = useState<string>("");
@@ -88,6 +91,7 @@ const Index: React.FC = () => {
     if (normalized.includes("AV") || normalized.includes("BV")) return "afternoon" as const;
     return "both" as const;
   }, [selectedClass]);
+
   const todayTeacherSchedule =
     teacherMap.get(todayTeacher) ?? teacherSchedules[0] ?? ({ name: "", lessons: [], scheduleByDay: {} } as any);
   const todayClassSchedule =
@@ -249,7 +253,13 @@ const Index: React.FC = () => {
                     <SelectTrigger className="h-10 rounded-xl bg-slate-900/60 text-sm">
                       <SelectValue placeholder="Escolha um professor" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900">
+                    <SelectContent
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      className={dropdownContentClassName}
+                    >
                       {teacherSchedules.map((t) => (
                         <SelectItem key={t.name} value={t.name}>
                           {t.name}
@@ -262,7 +272,13 @@ const Index: React.FC = () => {
                     <SelectTrigger className="h-10 rounded-xl bg-slate-900/60 text-sm">
                       <SelectValue placeholder="Escolha uma turma" />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900">
+                    <SelectContent
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      className={dropdownContentClassName}
+                    >
                       {orderedClassSchedules.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
                           {c.name}
@@ -355,8 +371,9 @@ const Index: React.FC = () => {
         <div className="flex h-full flex-col overflow-hidden">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="text-xl font-black uppercase tracking-[0.18em]">Visão Geral</DialogTitle>
+            <p className="text-sm text-white/70">Deslize entre manhã e tarde em alta resolução.</p>
           </DialogHeader>
-          <div className="flex-1 overflow-hidden px-4 py-4 sm:px-6 sm:py-6">
+          <div className="flex-1 overflow-y-auto p-5 pb-safe sm:p-6">
             <OverviewCarousel />
           </div>
         </div>
@@ -376,7 +393,7 @@ const Index: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-[1.35rem] font-extrabold tracking-tight text-white sm:text-2xl">Horários 2026</div>
-              <div className="mt-0.5 truncate text-sm text-white/80">CETI Satélite</div>
+              <div className="mt-0.5 truncate text-sm text-white/80">Colégio Estadual Satélite</div>
             </div>
           </div>
 
@@ -455,7 +472,13 @@ const Index: React.FC = () => {
                     <SelectTrigger className="h-10 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
                       <SelectValue placeholder="Escolha" />
                     </SelectTrigger>
-                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                    <SelectContent
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      className={dropdownContentClassName}
+                    >
                       {teacherSchedules.map((t) => (
                         <SelectItem key={t.name} value={t.name}>
                           {t.name}
@@ -476,7 +499,13 @@ const Index: React.FC = () => {
                     <SelectTrigger className="h-10 rounded-xl border-white/10 bg-slate-900/60 text-sm text-white/90">
                       <SelectValue placeholder="Escolha" />
                     </SelectTrigger>
-                    <SelectContent className="border-white/10 bg-slate-900 text-white">
+                    <SelectContent
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      className={dropdownContentClassName}
+                    >
                       {orderedClassSchedules.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
                           {c.name}
@@ -491,20 +520,30 @@ const Index: React.FC = () => {
 
           {showTeacherSection && currentTeacher && (
             <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Docente</div>
+                  <div className="text-2xl font-black text-white">{selectedTeacher}</div>
+                </div>
+              </div>
               <ScheduleGrid
                 scheduleByDay={currentTeacher.scheduleByDay}
                 classColorMap={classColorMap}
                 onLessonClick={handleTeacherLessonClick}
                 activeKey={activeKeyTeacher}
                 getLessonKey={(lesson) => `${getSubjectCode(lesson.className)}|${lesson.classGroup}`}
-                visibleShift="both"
               />
-
             </div>
           )}
 
           {showClassSection && currentClassSchedule && (
             <div className="overflow-x-hidden rounded-[2.25rem] border border-white/10 bg-white/5 p-4 sm:rounded-[2.5rem] sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="text-[0.65rem] font-bold uppercase text-white/40">Turma</div>
+                  <div className="text-2xl font-black text-white">{selectedClass}</div>
+                </div>
+              </div>
               <ScheduleGrid
                 scheduleByDay={currentClassSchedule.scheduleByDay}
                 classColorMap={classColorMap}
@@ -513,9 +552,7 @@ const Index: React.FC = () => {
                 getLessonKey={(lesson) => getSubjectCode(lesson.className)}
                 showTeacher
                 highlightColor="#f59e0b"
-                visibleShift={selectedClassVisibleShift}
               />
-
             </div>
           )}
         </div>
