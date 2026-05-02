@@ -116,20 +116,21 @@ export const ScheduleGrid = ({
   const showAfternoon = visibleShift !== "morning";
 
   return (
-    <div className="-mx-4 overflow-x-hidden pb-4 no-scrollbar">
-      <div className="flex w-full flex-col gap-4 px-4">
+    <div className="-mx-4 overflow-x-auto pb-4 no-scrollbar">
+      <div className="flex w-max gap-4 px-4 snap-x snap-mandatory">
         {days.map((day) => {
           const dayLessons = scheduleByDay[day];
 
           return (
             <article
               key={day}
-              className="rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl"
+              className="flex-shrink-0 snap-start rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl"
+              style={{ width: "84vw", maxWidth: 400 }}
             >
               <header className="mb-4 flex items-start justify-between border-b border-white/6 pb-3">
                 <div>
                   <h3 className="text-lg md:text-xl font-extrabold uppercase tracking-widest text-white">{day}</h3>
-                  <div className="mt-1 text-xs text-white/50 uppercase">Grade Completa</div>
+                  <div className="mt-1 text-xs uppercase tracking-[0.24em] text-white/45">Grade completa</div>
                 </div>
               </header>
 
