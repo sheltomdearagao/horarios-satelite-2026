@@ -41,9 +41,6 @@ const formatShortDateForButton = (d: Date) => {
   return `${weekday} - ${day}/${month}`;
 };
 
-const dropdownContentClassName =
-  "border-white/10 bg-slate-900 text-white max-h-[45vh] overflow-y-auto shadow-2xl";
-
 const Index: React.FC = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedClass, setSelectedClass] = useState<string>("");
@@ -81,6 +78,7 @@ const Index: React.FC = () => {
 
   const currentTeacher = selectedTeacher ? teacherMap.get(selectedTeacher) : undefined;
   const currentClassSchedule = selectedClass ? classMap.get(selectedClass) : undefined;
+
   const selectedClassVisibleShift = useMemo(() => {
     if (!selectedClass) return "both" as const;
     const normalized = selectedClass.toUpperCase();
@@ -258,7 +256,7 @@ const Index: React.FC = () => {
                       align="start"
                       sideOffset={8}
                       avoidCollisions={false}
-                      className={dropdownContentClassName}
+                      className="border-white/10 bg-slate-900 text-white max-h-[45vh] overflow-y-auto shadow-2xl"
                     >
                       {teacherSchedules.map((t) => (
                         <SelectItem key={t.name} value={t.name}>
@@ -277,7 +275,7 @@ const Index: React.FC = () => {
                       align="start"
                       sideOffset={8}
                       avoidCollisions={false}
-                      className={dropdownContentClassName}
+                      className="border-white/10 bg-slate-900 text-white max-h-[45vh] overflow-y-auto shadow-2xl"
                     >
                       {orderedClassSchedules.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
@@ -477,7 +475,7 @@ const Index: React.FC = () => {
                       align="start"
                       sideOffset={8}
                       avoidCollisions={false}
-                      className={dropdownContentClassName}
+                      className="max-h-[45vh] overflow-y-auto border-white/10 bg-slate-900 text-white shadow-2xl"
                     >
                       {teacherSchedules.map((t) => (
                         <SelectItem key={t.name} value={t.name}>
@@ -504,7 +502,7 @@ const Index: React.FC = () => {
                       align="start"
                       sideOffset={8}
                       avoidCollisions={false}
-                      className={dropdownContentClassName}
+                      className="max-h-[45vh] overflow-y-auto border-white/10 bg-slate-900 text-white shadow-2xl"
                     >
                       {orderedClassSchedules.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
@@ -552,6 +550,7 @@ const Index: React.FC = () => {
                 getLessonKey={(lesson) => getSubjectCode(lesson.className)}
                 showTeacher
                 highlightColor="#f59e0b"
+                visibleShift={selectedClassVisibleShift}
               />
             </div>
           )}
