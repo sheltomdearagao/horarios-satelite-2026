@@ -391,7 +391,7 @@ const Index: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-[1.35rem] font-extrabold tracking-tight text-white sm:text-2xl">Horários 2026</div>
-              <div className="mt-0.5 truncate text-sm text-white/80">Colégio Estadual Satélite</div>
+              <div className="mt-0.5 truncate text-sm text-white/80">CETI Satélite</div>
             </div>
           </div>
 
