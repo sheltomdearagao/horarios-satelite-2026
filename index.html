@@ -1,42 +1,244 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Horário CETI Satélite</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Horários - Em Manutenção</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 
-    <link rel="icon" href="/icons/icon-64.png" sizes="64x64" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
+        :root {
+            --primary: #6C63FF;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+        }
 
-    <meta name="theme-color" content="#0b1220" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <!-- Link preview (WhatsApp / Open Graph) -->
-    <meta property="og:site_name" content="Horário Satélite" />
-    <meta property="og:title" content="Horários 2026" />
-    <meta
-      property="og:description"
-      content="Consulte os horários do CETI Satélite por professor(a) ou turma."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+        }
 
-    <!-- Twitter/X preview -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Horários 2026" />
-    <meta
-      name="twitter:description"
-      content="Consulte os horários do CETI Satélite por professor(a) ou turma."
-    />
-    <meta name="twitter:image" content="/og-image.png" />
-  </head>
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .game-container {
+            background: #fff;
+            border: 3px dashed #b2bec3;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .score-board {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+        }
+
+        #game-board {
+            width: 100%;
+            height: 200px;
+            background: #dfe6e9;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        #target {
+            font-size: 40px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            user-select: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        #target:active {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn-start:hover {
+            background: #5046e5;
+            transform: scale(1.05);
+        }
+
+        .floating-text {
+            position: absolute;
+            color: #00b894;
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            animation: fadeUp 1s ease-out forwards;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-30px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🛠️ Ajustando os ponteiros!</h1>
+        <p>Nosso app de horários está recebendo algumas melhorias para você nunca mais perder o ônibus. Voltaremos em alguns minutinhos!</p>
+
+        <div class="game-container">
+            <div class="game-header">
+                <span>Passatempo: Caça-Tempo!</span>
+                <div class="score-board">Pontos: <span id="score">0</span></div>
+            </div>
+            
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">Clique nos ícones antes que eles fujam para acelerar o tempo!</p>
+
+            <div id="game-board">
+                <div id="target" style="display: none;">⏰</div>
+            </div>
+
+            <button class="btn-start" id="start-btn" onclick="startGame()">Começar Jogo</button>
+        </div>
+    </div>
+
+    <script>
+        const target = document.getElementById('target');
+        const board = document.getElementById('game-board');
+        const scoreElement = document.getElementById('score');
+        const startBtn = document.getElementById('start-btn');
+        
+        let score = 0;
+        let gameInterval;
+        const emojis = ['⏰', '🚌', '🗓️', '🏃💨', '🚏'];
+
+        function moveTarget() {
+            // Pegar dimensões da área de jogo
+            const boardWidth = board.clientWidth;
+            const boardHeight = board.clientHeight;
+            
+            // Tamanho estimado do emoji
+            const targetSize = 40; 
+
+            // Calcular posições aleatórias garantindo que fique dentro da caixa
+            const randomX = Math.random() * (boardWidth - targetSize);
+            const randomY = Math.random() * (boardHeight - targetSize);
+
+            // Trocar o emoji aleatoriamente
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            target.textContent = randomEmoji;
+            target.style.left = `${randomX + (targetSize/2)}px`;
+            target.style.top = `${randomY + (targetSize/2)}px`;
+        }
+
+        function createFloatingText(x, y) {
+            const floatText = document.createElement('div');
+            floatText.textContent = '+1';
+            floatText.className = 'floating-text';
+            floatText.style.left = `${x}px`;
+            floatText.style.top = `${y}px`;
+            board.appendChild(floatText);
+
+            setTimeout(() => {
+                floatText.remove();
+            }, 1000);
+        }
+
+        target.addEventListener('mousedown', (e) => {
+            score++;
+            scoreElement.textContent = score;
+            
+            // Criar animação de +1 onde o usuário clicou
+            const rect = board.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            createFloatingText(x, y);
+
+            // Move imediatamente ao ser clicado e reseta o tempo
+            clearInterval(gameInterval);
+            moveTarget();
+            gameInterval = setInterval(moveTarget, 900); // Fica um pouco mais rápido
+        });
+
+        function startGame() {
+            score = 0;
+            scoreElement.textContent = score;
+            startBtn.style.display = 'none';
+            target.style.display = 'block';
+            
+            moveTarget();
+            // Move o alvo a cada 1.2 segundos caso o usuário não clique
+            gameInterval = setInterval(moveTarget, 1200);
+        }
+    </script>
+</body>
 </html>
