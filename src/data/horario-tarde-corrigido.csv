@@ -9,18 +9,18 @@ TER;1;CIE - Allan;LP - Roberta;MAT - Edneia;ART - Rubi;CIE - Rosa;MAT - LC;ING -
 ;3;MAT - Edneia;CIE - Rosa;LP - Roberta;EF - Marcelo;LP - Sheltom;ART - Rubi;LP - Teresa;CIE - Eugênio; - ; - ; - 
 ;4;LP - Roberta;CIE - Rosa;EF - Marcelo;MAT - Edneia;ART - Rubi;LP - Sheltom;MAT - LC;LP - Teresa; - ; - ; - 
 ;5;LP - Roberta;MAT - Edneia;ART - Rubi;CIE - Rosa;EF - Marcelo;LP - Sheltom;MAT - LC;LP - Teresa; - ; - ; - 
-QUA;1;GEO - Everton;CIE - Rosa;PDV - Allan;HIS - Ek;MAT - Edneia;HIS - Francisco;GEO - Larissa;MAT - LC;QUI - Valéria;BIO - Eugênio;HBC - Ralph
-;2;HIS - Francisco;GEO - Everton;CIE - Rosa;HIS - Ek;MAT - Edneia;MAT - LC;GEO - Larissa;CIE - Eugênio;QUI - Valéria;EDM - Ralph;FAC - Allan
-;3;HIS - Francisco;GEO - Everton;HIS - Ek;MAT - Edneia;CIE - Rosa;CID - Larissa;CIE - Eugênio;MAT - LC; - ; - ; - 
-;4;CIE - Allan;HIS - Francisco;HIS - Ek;MAT - Edneia;CIE - Rosa;GEO - Everton;MAT - LC;GEO - Larissa; - ; - ; - 
-;5;CIE - Allan;HIS - Francisco;MAT - Edneia;HIS - Ek;GEO - Everton;CIE - Rosa;CTET - LC;GEO - Larissa; - ; - ; - 
-QUI;1;HIS - Francisco;LP - Roberta;ART - Rubi;ING - Cris;LP - Sheltom;EF - Marcelo;PDV - Duda;HIS - Ek;FIL - Larissa;LP - Teresa;ALP - Allan
-;2;ART - PROF;LP - Roberta;HIS - Ek;GEO - Duda;LP - Sheltom;HIS - Francisco;EF - Marcelo;ART - Rubi;SOC - Larissa;LP - Teresa;ALP - Allan
-;3;ART - PROF;HIS - Francisco;LP - Roberta;GEO - Duda;ING - Cris;LP - Sheltom;HIS - Ek;LP - Teresa; - ; - ; - 
-;4;GEO - Everton;ART - PROF;ING - Cris;LP - Roberta;HIS - Francisco;LP - Sheltom;LP - Teresa;PDV - Duda; - ; - ; - 
-;5;ING - Cris;ART - PROF;GEO - Duda;LP - Roberta;HIS - Francisco;GEO - Everton;ING - Sheltom;GEO - Larissa; - ; - ; - 
+QUA;1;EF - Prof;CIE - Rosa;PDV - Allan;HIS - Ek;MAT - Edneia;HIS - Francisco;GEO - Larissa;MAT - LC;QUI - Valéria;BIO - Eugênio;HBC - Ralph
+;2;EF - Prof;HIS - Francisco;CIE - Rosa;HIS - Ek;MAT - Edneia;MAT - LC;GEO - Larissa;CIE - Eugênio;QUI - Valéria;EDM - Ralph;FAC - Allan
+;3;CIE - Allan;HIS - Francisco;HIS - Ek;MAT - Edneia;CIE - Rosa;CID - Larissa;CIE - Eugênio;MAT - LC; - ; - ; - 
+;4;HIS - Francisco;EF - Prof;HIS - Ek;MAT - Edneia;CIE - Rosa;GEO - Everton;MAT - LC;GEO - Larissa; - ; - ; - 
+;5;HIS - Francisco;EF - Prof;MAT - Edneia;HIS - Ek;GEO - Everton;CIE - Rosa;CTET - LC;GEO - Larissa; - ; - ; - 
+QUI;1;GEO - Everton;HIS - Francisco;ART - Rubi;ING - Cris;LP - Sheltom;EF - Marcelo;PDV - Duda;HIS - Ek;FIL - Larissa;LP - Teresa;ALP - Allan
+;2;GEO - Everton;LP - Roberta;HIS - Ek;GEO - Duda;LP - Sheltom;HIS - Francisco;EF - Marcelo;ART - Rubi;SOC - Larissa;LP - Teresa;ALP - Allan
+;3;HIS - Francisco;GEO - Everton;LP - Roberta;GEO - Duda;ING - Cris;LP - Sheltom;HIS - Ek;LP - Teresa; - ; - ; - 
+;4;ING - Cris;GEO - Everton;ING - Cris;LP - Roberta;HIS - Francisco;LP - Sheltom;LP - Teresa;PDV - Duda; - ; - ; - 
+;5;CIE - Allan;ING - Cris;GEO - Duda;LP - Roberta;HIS - Francisco;GEO - Everton;ING - Sheltom;GEO - Larissa; - ; - ; - 
 SEX;1;ING - Cris;GEO - Everton;LP - Roberta;MAT - Edneia;HIS - Francisco;CIE - Rosa;GEO - Larissa;ART - Rubi;EDM - Ralph;HIS - Ek;EF - PROF
-;2;EF - PROF;MAT - Edneia;LP - Roberta;CIE - Rosa;GEO - Everton;ING - Cris;ART - Rubi;HIS - Ek;SOC - Larissa;HBC - Francisco;PTS - Ralph
-;3;EF - PROF;ING - Cris;MAT - Edneia;CIE - Rosa;GEO - Everton;HIS - Francisco;ART - Rubi;HIS - Ek; - ; - ; - 
-;4;GEO - Everton;EF - PROF;MAT - Edneia;LP - Roberta;ART - Rubi;CIE - Rosa;HIS - Ek;ING - Cris; - ; - ; - 
-;5;LP - Roberta;EF - PROF;CIE - Rosa;ART - Rubi;MAT - Edneia;GEO - Everton;HIS - Ek;ING - Cris; - ; - ; - 
+;2;ART - Prof;MAT - Edneia;LP - Roberta;CIE - Rosa;GEO - Everton;ING - Cris;ART - Rubi;HIS - Ek;SOC - Larissa;HBC - Francisco;PTS - Ralph
+;3;ART - Prof;LP - Roberta;MAT - Edneia;CIE - Rosa;GEO - Everton;HIS - Francisco;ART - Rubi;HIS - Ek; - ; - ; - 
+;4;GEO - Everton;ART - Prof;MAT - Edneia;LP - Roberta;ART - Rubi;CIE - Rosa;HIS - Ek;ING - Cris; - ; - ; - 
+;5;LP - Roberta;ART - Prof;CIE - Rosa;ART - Rubi;MAT - Edneia;GEO - Everton;HIS - Ek;ING - Cris; - ; - ; -
